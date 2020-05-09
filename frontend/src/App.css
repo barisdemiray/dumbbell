@@ -3,24 +3,35 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  margin: 2rem;
 }
 
-.SearchBoxContainer {
+.SearchContainer {
   display: flex;
-  flex-direction: column;
+  flex-direction: center;
   justify-content: center;
   align-items: center;
 
-  margin: 5rem auto;
-
+  height: 30vh;
+  width: 90vw;
+  margin: auto;
   border: 1px solid red;
-
-  width: 60vw;
-  height: 60vh;
 }
 
-@media screen and (max-width: 640px) {
-  .SearchBoxContainer {
-    width: 90vw;
-  }
+.SearchError {
+  font-size: 1rem;
+  color: red;
+}
+
+.ResultContainer {
+  display: flex;
+  flex-direction: center;
+  justify-content: center;
+  align-items: center;
+
+  height: 60vh;
+  width: 90vw;
+  margin: auto;
+  border: 1px solid blue;
 }

@@ -1,19 +1,43 @@
-.SearchBox {
+.SearchBoxContainer {
+  position: relative;
+  padding: 0 0 0 20px;
+  margin: 0 20px;
+}
+
+/* This magnifier icon will be shown inside the input box */
+.SearchBoxIcon {
+  position: absolute;
+  bottom: 25px;
+  right: 10px;
+
+  width: 2rem;
+  height: 2rem;
+}
+
+.SearchBoxInput {
+  height: 20px;
+  margin: 0;
   width: 50vw;
   height: 2rem;
 
-  padding: 1rem;
   font-size: 2rem;
   font-weight: 100;
   color: #777;
 
-  text-align: center;
+  padding: 25px;
+  padding-right: 50px;
 
-  border: 2px solid #eee;
+  text-align: center;
+  border: 1px solid #eee;
+  border-radius: 1rem;
 }
 
 @media screen and (max-width: 640px) {
-  .SearchBox {
+  .SearchBoxContainer {
+    width: 90vw;
+  }
+
+  .SearchBoxInput {
     width: 70vw;
   }
 }
