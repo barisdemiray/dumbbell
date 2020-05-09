@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 
 import SearchBox from './components/searchbox.component';
+import * as PackageTools from './tools/package';
 
 function App() {
   // Let's show a feedback while getting data from backend
@@ -27,14 +28,9 @@ function App() {
     // Clear any previous results
     setResult({});
 
-    // Package name should not have spaces
-    if (val.indexOf(' ') >= 0) {
-      setError('Package names should not have spaces');
-    } else if (val.length === 0) {
-      setError('Package name cannot be empty');
-    } else {
-      // Reset error when user starts typing again
-      setError('');
+    const result = PackageTools.isPackageNameValid(val);
+    if (result.valid === false) {
+      setError(result.message);
     }
   };
 
