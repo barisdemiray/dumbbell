@@ -8,11 +8,7 @@ const get_bundle_info = async (package_name) => {
 
   let bundle_infos = [];
 
-  // todo this is temporary for tests
-  let _versions = versions.last_4.slice(-1);
-  console.log(_versions);
-
-  for (const version of _versions) {
+  for (const version of versions.last_4) {
     const package_name_with_version = package_name + '@' + version;
     console.log(`Getting bundle info for version ${package_name_with_version}`);
 
@@ -24,6 +20,7 @@ const get_bundle_info = async (package_name) => {
     await package_tools.uninstall_package(package_name);
   }
 
+  // todo report versios here too!
   console.debug(`bundle info for ${package_name}`, bundle_infos);
 
   return true;
