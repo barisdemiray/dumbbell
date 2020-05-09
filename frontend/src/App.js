@@ -13,13 +13,15 @@ function App() {
 
   // todo grab backend response here
   useEffect(() => {
-    fetch('http://localhost:8080/?package=' + packageName)
-      .then((response) => response.json())
-      .then((response) => {
-        console.log(response);
-        setResult(response);
-      })
-      .catch((error) => console.error(error));
+    if (packageName) {
+      fetch('http://localhost:8080/?package=' + packageName)
+        .then((response) => response.json())
+        .then((response) => {
+          console.log(response);
+          setResult(response);
+        })
+        .catch((error) => console.error(error));
+    }
   }, [packageName]);
 
   const handleChange = (val) => {

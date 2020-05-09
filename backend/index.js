@@ -27,17 +27,8 @@ const get_bundle_info = async (package_name) => {
   // todo report versios here too!
   console.debug(`bundle info for ${package_name}`, bundle_infos);
 
-  return true;
+  return bundle_infos;
 };
-
-// todo test with 'expect' after, it may be requiring a webpack loader config
-// get_bundle_info('expect')
-//   .then((data) => {
-//     console.debug(data);
-//   })
-//   .catch((error) => {
-//     console.error(error);
-//   });
 
 const server = http.createServer(function (req, res) {
   let query = url.parse(req.url, true).query;
@@ -45,16 +36,29 @@ const server = http.createServer(function (req, res) {
 
   console.debug('user is asking for package', package_name);
 
-  res.statusCode = 200;
+  // Enable CORS requests to allow querystrings
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   res.setHeader('Content-Type', 'application/json');
 
-  const fake_response = {
-    size: 40,
-  };
-
-  res.end(JSON.stringify(fake_response, null, 2));
+  get_bundle_info(package_name)
+    .then((data) => {
+      res.statusCode = 200;
+      res.end(JSON.stringify(data[0], null, 2));
+    })
+    .catch((error) => {
+      res.statusCode = 500;
+      res.end(
+        JSON.stringify(
+          {
+            size: 0,
+          },
+          null,
+          2
+        )
+      );
+      console.error(error);
+    });
 });
 
 const SERVER_HOST = '127.0.0.1';
