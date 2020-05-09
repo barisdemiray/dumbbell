@@ -1,24 +1,25 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
+import SearchBox from './components/searchbox.component';
+
 function App() {
+  // Let's show a feedback while getting data from backend
+  const [loading, setLoading] = useState(false);
+  const [packageName, setPackageName] = useState('');
+
+  // todo grab backend response here
+  useEffect(() => {}, []);
+
+  const handleChange = (val) => {
+    console.debug('search value', val);
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="SearchBoxContainer">
+        <SearchBox handleChange={handleChange} />
+      </div>
     </div>
   );
 }

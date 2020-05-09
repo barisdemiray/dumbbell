@@ -8,7 +8,7 @@
   "scripts": {
     "build": "babel src -d lib",
     "start": "node index.js",
-    "start_backend": "node backend/index.js",
+    "start_backend": "node index.js",
     "test": "jest"
   },
   "dependencies": {
