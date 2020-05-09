@@ -2,17 +2,26 @@ import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import './searchbox.styles.css';
 
-function SearchBox({ handleChange }) {
+function SearchBox({ handleChange, handleSubmit }) {
   const [query, setQuery] = useState('');
 
   /* This is internal, it only updates internal state */
   const updateChange = (query) => {
     setQuery(query);
+    // Also let parent component know for possible error messages
+    handleChange(query);
   };
 
   /* This is where we elevate the query to parent component */
   const submitChange = () => {
-    handleChange(query);
+    handleSubmit(query);
+  };
+
+  /* Better user experience by handling enter key on the search box */
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleSubmit(query);
+    }
   };
 
   return (
@@ -22,6 +31,7 @@ function SearchBox({ handleChange }) {
         className="SearchBoxInput"
         type="text"
         onChange={(e) => updateChange(e.target.value)}
+        onKeyDown={(e) => handleKeyDown(e)}
         placeholder="Package name, e.g. react"
       />
       <img
@@ -35,6 +45,7 @@ function SearchBox({ handleChange }) {
 
 SearchBox.propTypes = {
   handleChange: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
 };
 
 export default SearchBox;

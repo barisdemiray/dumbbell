@@ -9,7 +9,7 @@
 
 .SearchContainer {
   display: flex;
-  flex-direction: center;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 
@@ -22,6 +22,7 @@
 .SearchError {
   font-size: 1rem;
   color: red;
+  margin-top: 2rem;
 }
 
 .ResultContainer {

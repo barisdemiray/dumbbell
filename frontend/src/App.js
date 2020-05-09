@@ -7,13 +7,18 @@ function App() {
   // Let's show a feedback while getting data from backend
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [result, setResult] = useState({});
   const [packageName, setPackageName] = useState('');
 
   // todo grab backend response here
   useEffect(() => {
     fetch('http://localhost:8080/?package=' + packageName)
       .then((response) => response.json())
-      .then((data) => console.log(data));
+      .then((response) => {
+        console.log(response);
+        setResult(response);
+      })
+      .catch((error) => console.error(error));
   }, [packageName]);
 
   const handleChange = (val) => {
@@ -22,6 +27,17 @@ function App() {
     // Package name should not have spaces
     if (val.indexOf(' ') >= 0) {
       setError('Package names should not have spaces');
+    } else if (val.length === 0) {
+      setError('Package name cannot be empty');
+    } else {
+      // Reset error when user starts typing again
+      setError('');
+    }
+  };
+
+  const handleSubmit = (val) => {
+    if (val.length === 0) {
+      setError('Package name cannot be empty');
     } else {
       setPackageName(val);
     }
@@ -29,7 +45,7 @@ function App() {
 
   const renderError = () => {
     if (error) {
-      return <span className="SearchError">{error}</span>;
+      return <div className="SearchError">{error}</div>;
     }
 
     return null;
@@ -38,10 +54,10 @@ function App() {
   return (
     <div className="App">
       <div className="SearchContainer">
-        <SearchBox handleChange={handleChange} />
+        <SearchBox handleChange={handleChange} handleSubmit={handleSubmit} />
         {renderError()}
       </div>
-      <div className="ResultContainer">No results yet</div>
+      <div className="ResultContainer">{JSON.stringify(result)}</div>
     </div>
   );
 }
