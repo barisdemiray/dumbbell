@@ -10,8 +10,8 @@
   bottom: 25px;
   right: 10px;
 
-  width: 2rem;
-  height: 2rem;
+  width: 30px;
+  height: auto;
 }
 
 .SearchBoxInput {
@@ -34,10 +34,14 @@
 
 @media screen and (max-width: 640px) {
   .SearchBoxContainer {
-    width: 90vw;
+    margin: 0 5px;
   }
 
   .SearchBoxInput {
     width: 70vw;
+    font-size: 1.5rem;
+  }
+
+  .SearchBoxIcon {
   }
 }

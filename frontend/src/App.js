@@ -47,11 +47,7 @@ function App() {
   };
 
   const renderError = () => {
-    if (error) {
-      return <div className="SearchError">{error}</div>;
-    }
-
-    return null;
+    return <div className="SearchError">{error}</div>;
   };
 
   return (
