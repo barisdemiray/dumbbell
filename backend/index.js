@@ -8,7 +8,8 @@ const get_bundle_info = async (package_name) => {
 
   let bundle_infos = [];
 
-  for (const version of versions.last_4) {
+  // todo slice(-1) is temporary for tests
+  for (const version of versions.last_4.slice(-1)) {
     const package_name_with_version = package_name + '@' + version;
     console.log(`Getting bundle info for version ${package_name_with_version}`);
 
