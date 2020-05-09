@@ -27,7 +27,7 @@ const get_bundle_info = async (package_name) => {
 };
 
 // todo test with 'expect' after, it may be requiring a webpack loader config
-get_bundle_info('react')
+get_bundle_info('expect')
   .then((data) => {
     console.debug(data);
   })
