@@ -24,6 +24,9 @@ function App() {
   const handleChange = (val) => {
     console.debug('search value', val);
 
+    // Clear any previous results
+    setResult({});
+
     // Package name should not have spaces
     if (val.indexOf(' ') >= 0) {
       setError('Package names should not have spaces');
