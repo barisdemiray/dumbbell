@@ -78,21 +78,27 @@ exports.get_bundle_info = async function (package_name) {
     const bundle_file_name = await this.bundle_package(package_name);
     console.debug('bundle_file_name', bundle_file_name);
 
-    // const minified_bundle_file_name = await this.minify_bundle_file(bundle_file_dir, bundle_file_name);
-    // // console.debug('minified_bundle_file_name', minified_bundle_file_name);
+    const minified_bundle_file_name = await this.minify_bundle_file(
+      bundle_file_dir,
+      bundle_file_name
+    );
+    console.debug('minified_bundle_file_name', minified_bundle_file_name);
 
-    // const gzipped_minified_bundle_file_name = await file_tools.gzip_file(bundle_file_dir, minified_bundle_file_name);
-    // // console.debug('gzipped_minified_bundle_file_name', gzipped_minified_bundle_file_name);
+    const gzipped_minified_bundle_file_name = await file_tools.gzip_file(
+      bundle_file_dir,
+      minified_bundle_file_name
+    );
+    console.debug('gzipped_minified_bundle_file_name', gzipped_minified_bundle_file_name);
 
-    // const file_size = file_tools.get_file_size_in_bytes(path.join(bundle_file_dir, gzipped_minified_bundle_file_name));
-    // // console.debug('file_size', file_size);
+    const file_size = file_tools.get_file_size_in_bytes(
+      path.join(bundle_file_dir, gzipped_minified_bundle_file_name)
+    );
+    console.debug('file_size', file_size);
 
     // todo Cleanup all remove temp files
 
     return {
-      // other info?
-      // size: file_size
-      size: 0,
+      size: file_size,
     };
   } catch (error) {
     console.error(error);

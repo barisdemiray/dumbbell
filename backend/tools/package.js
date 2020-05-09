@@ -2,6 +2,8 @@ const execa = require('execa');
 const path = require('path');
 const fs = require('fs');
 
+const version_tools = require('./version');
+
 // todo do not bloat our own node_modules, install into temporary directory
 exports.install_package = async function (package_name) {
   const args = ['add', package_name];
