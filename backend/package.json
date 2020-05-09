@@ -1,0 +1,13 @@
+{
+  "name": "backend",
+  "version": "0.0.1",
+  "description": "Backend of the bundle size overhead report tool",
+  "main": "index.js",
+  "author": "Baris Demiray",
+  "license": "MIT",
+  "scripts": {
+    "build": "babel src -d lib",
+    "start": "node index.js",
+    "test": "jest"
+  }
+}
