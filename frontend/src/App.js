@@ -9,32 +9,7 @@ function App() {
   // Let's show a feedback while getting data from backend
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [resultData, setResultData] = useState([
-    {
-      bundleSizeInBytes: 96212,
-      minifiedBundleSizeInBytes: 30377,
-      minifiedAndGzippedBundleSizeInBytes: 9297,
-      version: '16.11.0',
-    },
-    {
-      bundleSizeInBytes: 96149,
-      minifiedBundleSizeInBytes: 32377,
-      minifiedAndGzippedBundleSizeInBytes: 9898,
-      version: '16.12.0',
-    },
-    {
-      bundleSizeInBytes: 82394,
-      minifiedBundleSizeInBytes: 35182,
-      minifiedAndGzippedBundleSizeInBytes: 9907,
-      version: '16.13.0',
-    },
-    {
-      bundleSizeInBytes: 82394,
-      minifiedBundleSizeInBytes: 38182,
-      minifiedAndGzippedBundleSizeInBytes: 11008,
-      version: '16.13.1',
-    },
-  ]);
+  const [resultData, setResultData] = useState([]);
   const [packageName, setPackageName] = useState('');
 
   /**
@@ -61,7 +36,7 @@ function App() {
    */
   const handleChange = (val) => {
     // Clear any previous results, i.e. if there had been errors with previous user input, etc.
-    setResultData({});
+    setResultData([]);
 
     const result = PackageTools.isPackageNameValid(val);
     if (result.valid === false) {
@@ -106,7 +81,9 @@ function App() {
    * Renders results in hopefully nice graphs.
    */
   const renderResults = () => {
-    return <ResultBox resultData={resultData} />;
+    if (Array.isArray(resultData) && resultData.length !== 0) {
+      return <ResultBox resultData={resultData} />;
+    }
   };
 
   return (

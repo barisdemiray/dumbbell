@@ -42,6 +42,10 @@ function BarChart({ data }) {
 
   // Renders all the elements in given data
   const renderElements = () => {
+    if (!data) {
+      return null;
+    }
+
     // console.table(data);
     return data.map((dataElement, index) => (
       <BarChartElement
