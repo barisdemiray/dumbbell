@@ -108,12 +108,11 @@ exports.findPackageDependencies = function (packageName) {
 
 /**
  * Returns following available versions of package with given name.
- * - All major versions
- * - Last 4 versions whatever the major version
- * - Last 4 versions of the last major version
- * @return {Object} An object with 3 properties as lists for these set of versions.
+ * - Last 3 versions of the last major version, or less if there aren't enough.
+ * - Last version of the previous major version.
+ * @return {Object} An object with 2 properties as lists for these set of versions.
  */
-exports.findAvailableVersions = async function (packageName) {
+exports.findRecentVersions = async function (packageName) {
   // We'll get all available versions from 'yarn info'
   const args = ['info', '--json', packageName];
 
@@ -131,25 +130,33 @@ exports.findAvailableVersions = async function (packageName) {
     // Get all major versions
     const majors = VersionTools.getMajorVersions(versions);
 
-    // Get last 4 versions, whatever the major is
-    const lastFourVersions = VersionTools.getLastNVersions(versions, 4);
-
-    // Get last 4 versions of the last major version
-    let lastFourVersionsOfLastMajor = [];
+    // Get last 3 versions of the last major version
+    let lastThreeVersionsOfLastMajor = [];
     if (majors) {
-      let [lastMajorVersion] = majors.slice(-1);
-      lastFourVersionsOfLastMajor = VersionTools.getLastNVersionsOfMajor(
+      let lastMajorVersion = majors[0];
+      console.debug('=== lastMajorVersion', lastMajorVersion);
+      lastThreeVersionsOfLastMajor = VersionTools.getLastNVersionsOfMajor(
         versions,
         lastMajorVersion,
-        4
+        3
       );
+    }
+
+    // Get last version of the previous major
+    let lastVersionOfPreviousMajor = '';
+    if (majors.length >= 2) {
+      const previousMajor = majors[1];
+      lastVersionOfPreviousMajor = VersionTools.getLastNVersionsOfMajor(
+        versions,
+        previousMajor,
+        1
+      )[0];
     }
 
     // Return an object with all required version info
     return {
-      majors,
-      lastFourVersions,
-      lastFourVersionsOfLastMajor,
+      lastThreeVersionsOfLastMajor,
+      lastVersionOfPreviousMajor,
     };
   } catch (error) {
     console.debug('error', error);

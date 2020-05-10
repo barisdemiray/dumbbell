@@ -13,19 +13,25 @@ const BundleTools = require('./tools/bundle');
  */
 const getBundleSizeInfoForRecentVersions = async (packageName) => {
   try {
-    const versions = await PackageTools.findAvailableVersions(packageName);
-
-    let bundleInfos = [];
+    const versions = await PackageTools.findRecentVersions(packageName);
 
     if (!versions) {
       return [];
     }
 
+    let bundleInfos = [];
+
+    // Make a list of all versions requested
+    const allVersionsToEvaluate = [
+      ...versions.lastThreeVersionsOfLastMajor,
+      versions.lastVersionOfPreviousMajor,
+    ];
+
     // Iterate available versions and do the following for each of them
     // - Install the package at that version
     // - Get size information of its bundle
     // - Uninstall the package
-    for (const version of versions.lastFourVersions) {
+    for (const version of allVersionsToEvaluate) {
       const packageNameWithVersion = packageName + '@' + version;
 
       console.debug(`Getting bundle info for version ${packageNameWithVersion}`);
