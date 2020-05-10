@@ -1,7 +1,18 @@
 .ResultBoxContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+
+  width: 60vw;
 }
 
-@media screen and (max-width: 640px) {
+@media screen and (max-width: 1024px) {
   .ResultBoxContainer {
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+
+    /* height: 90vh; */
   }
 }

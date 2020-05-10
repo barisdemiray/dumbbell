@@ -1,0 +1,58 @@
+.OverallSizeContainer {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: 1fr 2fr;
+  grid-gap: 10px;
+  border: 1px solid green;
+
+  min-height: 35vh;
+  min-width: 35vw;
+}
+
+/* Have the title cover up two columns */
+.OverallSizeTitle {
+  grid-column: span 2;
+  font-size: 2rem;
+  color: #888;
+  font-weight: 300;
+  text-transform: uppercase;
+  border: 1px solid green;
+
+  /* Center the title */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.OverallSize {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  border: 1px solid green;
+
+  /* Center the content */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.OverallSizeValue {
+  font-size: 3rem;
+  font-weight: bold;
+  color: black;
+}
+
+.OverallSizeValueUnit {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #666;
+  margin-left: 0.5rem;
+}
+
+.OverallSizeDefinition {
+  font-size: 1.25rem;
+  font-weight: 100;
+  color: #777;
+  text-transform: uppercase;
+  margin-top: 1rem;
+}
