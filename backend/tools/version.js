@@ -39,7 +39,7 @@ exports.get_last_n_versions = function (version_list, n) {
   return _versions.slice(-n);
 };
 
-exports.get_last_n_versions_of_major = function (version_list, major, n) {
+exports.getLastNVersionsOfMajor = function (version_list, major, n) {
   console.log('received', arguments);
 
   let _versions = this.clean_version_list(version_list);

@@ -2,103 +2,103 @@ const execa = require('execa');
 const path = require('path');
 const fs = require('fs');
 
-const path_tools = require('./path');
-const file_tools = require('./file');
-const package_tools = require('./package');
+const PathTools = require('./path');
+const FileTools = require('./file');
+const PackageTools = require('./package');
 
-// todo this is too big, refactor it
-// make every step a function and make them return path to generated file
-// then at the end of THIS get_bundle_info remove temporary files
-
-// comment this and all
-exports.bundle_package = async function (package_name) {
+/**
+ * Bundles given package installed in node_modules in a very very primitive way.
+ *
+ * @param {String} packageName Name of the package.
+ * @return {String} Name of the bundle file.
+ */
+exports.bundlePackage = async function (packageName) {
   try {
-    // First find entry point of this package in its package.json
-    const package_entry_point = await package_tools.get_package_entry_point(package_name);
+    // First find the entry point of this package in its package.json
+    const packageEntryPoint = await PackageTools.getPackageEntryPoint(packageName);
 
-    // webpack index.js --output-filename dist2/bundle.js
-    const temp_bundle_file_name = path_tools.get_temp_filename() + '.js';
-    const args = [package_entry_point, '--output-filename', temp_bundle_file_name];
+    const bundleFilename = PathTools.get_temp_filename() + '.js';
+    const args = [packageEntryPoint, '--output-filename', bundleFilename];
 
     console.debug('args bundle_package', args);
 
     // todo check return values of spawned processes
     // todo check if webpack is in the path
-    const { stdout, stderr } = await execa('webpack', args, {
-      cwd: path.join(path.dirname(require.resolve(`${package_name}/package.json`))),
-    });
+    const opts = { cwd: path.join(path.dirname(require.resolve(`${packageName}/package.json`))) };
+    const { stdout, stderr } = await execa('webpack', args, opts);
 
-    // console.debug("stdout", stdout);
-    // console.debug("stderr", stderr);
-
-    return temp_bundle_file_name;
-    // Remove the temporary file
-    // fs.unlinkSync(path.join(path.dirname(require.resolve(package_name)), temp_bundle_file_name));
+    return bundleFilename;
   } catch (error) {
-    console.debug('error', error);
+    console.error('error', error);
+    return null;
   }
 };
 
-exports.minify_bundle_file = async function (bundle_file_dir, bundle_file_name) {
-  // Minify the file
-  // todo this is probably not the best minifier in town
-  // minify 379298240.js -o 379298240.min.js
-  // Create a filename for the minified version, e.g. 91239128391.js -> 91239128391.js
-  const temp_minified_bundle_file_name = path_tools.get_minified_filename(bundle_file_name);
-  const args = [bundle_file_name, '-o', temp_minified_bundle_file_name];
-  const opts = {
-    cwd: bundle_file_dir,
-  };
-
-  // console.debug('args', args);
+/**
+ * Minifies given bundle file using 'minify'.
+ *
+ * @param {String} bundleFileDir Directory in which bundle file is located.
+ * @param {String} bundleFilename Name of the bundle file.
+ * @todo Look for better minifiers.
+ * @return {String}
+ */
+exports.minifyBundleFile = async function (bundleFileDir, bundleFilename) {
+  // Create a filename for the minified version, e.g. 91239128391.js -> 91239128391.min.js
+  const minifiedBundleFilename = PathTools.getMinifiedFilename(bundleFilename);
+  const args = [bundleFilename, '-o', minifiedBundleFilename];
+  const opts = { cwd: bundleFileDir };
 
   try {
-    // todo check if webpack is in the path
+    // todo check if minify is in the path
     const { stdout, stderr } = await execa('minify', args, opts);
 
-    // console.debug("stdout", stdout);
-    // console.debug("stderr", stderr);
-
-    // Remove the temporary file
-    // fs.unlinkSync(path.join(path.dirname(require.resolve(package_name)), bundle_file_name));
-
-    return temp_minified_bundle_file_name;
+    return minifiedBundleFilename;
   } catch (error) {
-    console.debug('error', error);
+    console.error('error', error);
+    return null;
   }
 };
 
-exports.get_bundle_info = async function (package_name) {
+/**
+ * Princial entry point for collecting bundle info. It minifies and gzips and then queries file size.
+ *
+ * @param {String} packageName Name of the package to be evaluated.
+ * @return {Object} An object with 'size' property indicating size in bytes of the bundle.
+ */
+exports.getBundleSizeInfo = async function (packageName) {
   try {
-    const bundle_file_dir = path.join(
-      path.dirname(require.resolve(`${package_name}/package.json`))
-    );
-    // console.debug('bundle_file_dir', bundle_file_dir);
+    const bundleFileDir = path.join(path.dirname(require.resolve(`${packageName}/package.json`)));
 
-    const bundle_file_name = await this.bundle_package(package_name);
-    console.debug('bundle_file_name', bundle_file_name);
+    const bundleFilename = await this.bundlePackage(packageName);
+    console.debug('bundleFilename', bundleFilename);
 
-    const minified_bundle_file_name = await this.minify_bundle_file(
-      bundle_file_dir,
-      bundle_file_name
-    );
-    console.debug('minified_bundle_file_name', minified_bundle_file_name);
+    const minifiedBundleFilename = await this.minifyBundleFile(bundleFileDir, bundleFilename);
+    console.debug('minifiedBundleFilename', minifiedBundleFilename);
 
-    const gzipped_minified_bundle_file_name = await file_tools.gzip_file(
-      bundle_file_dir,
-      minified_bundle_file_name
+    const gzippedAndMinifiedBundleFilename = await FileTools.gzipFile(
+      bundleFileDir,
+      minifiedBundleFilename
     );
-    console.debug('gzipped_minified_bundle_file_name', gzipped_minified_bundle_file_name);
+    console.debug('gzippedAndMinifiedBundleFilename', gzippedAndMinifiedBundleFilename);
 
-    const file_size = file_tools.get_file_size_in_bytes(
-      path.join(bundle_file_dir, gzipped_minified_bundle_file_name)
+    // Report size of bundle size, minified bundle size and finally minified and gzipped bundle size
+    const bundleSizeInBytes = FileTools.getFileSizeInBytes(
+      path.join(bundleFileDir, bundleFilename)
     );
-    console.debug('file_size', file_size);
+    const minifiedBundleSizeInBytes = FileTools.getFileSizeInBytes(
+      path.join(bundleFileDir, minifiedBundleFilename)
+    );
+    const minifiedAndGzippedBundleSizeInBytes = FileTools.getFileSizeInBytes(
+      path.join(bundleFileDir, gzippedAndMinifiedBundleFilename)
+    );
 
     // todo Cleanup all remove temp files
+    // fs.unlinkSync(path.join(path.dirname(require.resolve(package_name)), temp_bundle_file_name));
 
     return {
-      size: file_size,
+      bundleSizeInBytes,
+      minifiedBundleSizeInBytes,
+      minifiedAndGzippedBundleSizeInBytes,
     };
   } catch (error) {
     console.error(error);

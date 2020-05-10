@@ -2,81 +2,94 @@ const execa = require('execa');
 const path = require('path');
 const fs = require('fs');
 
-const version_tools = require('./version');
+const VersionTools = require('./version');
 
-// todo do not bloat our own node_modules, install into temporary directory
-exports.install_package = async function (package_name) {
-  const args = ['add', package_name];
-
-  try {
-    const { stdout, stderr } = await execa('yarn', args);
-
-    // console.debug('stdout', stdout);
-    // console.debug('stderr', stderr);
-  } catch (error) {
-    console.debug('error', error);
-  }
-};
-
-exports.uninstall_package = async function (package_name) {
-  const args = ['remove', package_name];
+/**
+ * Installs package with given name using yarn.
+ * @param {String} packageName Name of the package.
+ * @return {Boolean} True on success, false otherwise.
+ */
+exports.installPackage = async function (packageName) {
+  const args = ['add', packageName];
 
   try {
     const { stdout, stderr } = await execa('yarn', args);
-
-    // console.debug('stdout', stdout);
-    // console.debug('stderr', stderr);
+    return true;
   } catch (error) {
-    console.debug('error', error);
+    console.error('error', error);
+    return false;
   }
 };
 
-exports.get_package_entry_point = async function (package_name) {
-  // First we need the entry point of the package
-  let package_entry_point = '';
+/**
+ * Uninstalls package with given name using yarn.
+ * @param {String} packageName Name of the package.
+ * @return {Boolean} True on success, false otherwise.
+ */
+exports.uninstallPackage = async function (packageName) {
+  const args = ['remove', packageName];
 
   try {
-    // const package_json_path = path.join('./node_modules', package_name, 'package.json');
-    const package_json_path = require.resolve(`${package_name}/package.json`);
-    console.debug('package_json_path', package_json_path);
+    const { stdout, stderr } = await execa('yarn', args);
+    return true;
+  } catch (error) {
+    console.error('error', error);
+    return false;
+  }
+};
+
+/**
+ * Finds a package's entry point from its package.json, i.e. 'main'.
+ * @param {String} packageName Name of the package.
+ * @return {String} Entry point of the package, i.e. corresponding script's file name.
+ */
+exports.getPackageEntryPoint = async function (packageName) {
+  let packageEntryPoint = '';
+
+  try {
+    const packageJsonPath = require.resolve(`${packageName}/package.json`);
 
     // Load package.json only if it exists
-    if (fs.existsSync(package_json_path)) {
-      package_entry_point = require(package_json_path).main;
+    if (fs.existsSync(packageJsonPath)) {
+      packageEntryPoint = require(packageJsonPath).main;
     } else {
-      throw new Error(`File ${package_json_path} does not exist`);
+      throw new Error(`File ${packageJsonPath} does not exist`);
     }
   } catch (error) {
     console.error('error', error);
-    throw new Error(`Failed to get entry point for package ${package_name}`);
+    throw new Error(`Failed to get entry point for package ${packageName}`);
   }
 
-  console.debug('entry point is', package_entry_point);
-  return package_entry_point;
+  return packageEntryPoint;
 };
 
-// todo Another way would be 'yarn info', perhaps?
-exports.find_package_dependencies = function (package_name) {
-  // Let's have a closure to keep a cumulative list of dependencies
-  function do_find_package_dependencies(package_name) {
+/**
+ * Recursively finds a package's dependencies and dependencies of its dependencies and dependencies of ...
+ * @todo Look into 'yarn info' if it is easier.
+ * @param {String} packageName Name of the package.
+ * @return {Array} An array of all the dependencies needed for given package.
+ */
+exports.findPackageDependencies = function (packageName) {
+  // Let's have a closure to be able to keep a cumulative list of dependencies
+  function doFindPackageDependencies(packageName) {
     try {
-      const package_json_path = require.resolve(`${package_name}/package.json`);
-      console.log('package.json path', package_json_path);
+      const packageJsonPath = require.resolve(`${packageName}/package.json`);
 
       // Load package.json only if it exists
-      if (fs.existsSync(package_json_path)) {
-        const { version, dependencies } = require(package_json_path);
+      if (fs.existsSync(packageJsonPath)) {
+        const { version, dependencies } = require(packageJsonPath);
 
-        dependency_list.push(package_name);
+        overallDependencyList.push(packageName);
 
         for (const dep in dependencies) {
-          console.debug(`Found dependency ${dep} of ${package_name}`);
-          dependency_list.push(dep);
+          console.debug(`Found dependency ${dep} of ${packageName}`);
+          overallDependencyList.push(dep);
 
-          do_find_package_dependencies(dep);
+          // Dive again for this very package's dependencies
+          doFindPackageDependencies(dep);
         }
       } else {
-        console.warn(`${package_json_path} does not exists, skipping...`);
+        console.warn(`${packageJsonPath} does not exists, skipping...`);
       }
     } catch (error) {
       console.error('error', error);
@@ -84,18 +97,25 @@ exports.find_package_dependencies = function (package_name) {
   }
 
   // Start the recursive dependency extraction, stack is our friend
-  var dependency_list = [];
-  do_find_package_dependencies(package_name);
+  var overallDependencyList = [];
+  doFindPackageDependencies(packageName);
 
-  // List is possible not composed of unique elements at this point, make it so
-  dependency_list = [...new Set(dependency_list)];
+  // It is possible that the list have duplicate elements at this point, remove duplicates
+  overallDependencyList = [...new Set(overallDependencyList)];
 
-  return dependency_list;
+  return overallDependencyList;
 };
 
-exports.find_available_versions = async function (package_name) {
+/**
+ * Returns following available versions of package with given name.
+ * - All major versions
+ * - Last 4 versions whatever the major version
+ * - Last 4 versions of the last major version
+ * @return {Object} An object with 3 properties as lists for these set of versions.
+ */
+exports.findAvailableVersions = async function (packageName) {
   // We'll get all available versions from 'yarn info'
-  const args = ['info', '--json', package_name];
+  const args = ['info', '--json', packageName];
 
   try {
     const { stdout, stderr } = await execa('yarn', args);
@@ -103,23 +123,27 @@ exports.find_available_versions = async function (package_name) {
     let versions = JSON.parse(stdout).data.versions;
 
     // Get all major versions
-    const majors = version_tools.get_major_versions(versions);
+    const majors = VersionTools.get_major_versions(versions);
 
     // Get last 4 versions, whatever the major is
-    const last_4 = version_tools.get_last_n_versions(versions, 4);
+    const lastFourVersions = VersionTools.get_last_n_versions(versions, 4);
 
     // Get last 4 versions of the last major version
-    let last_4_of_last_major = [];
+    let lastFourVersionsOfLastMajor = [];
     if (majors) {
-      let [last_major] = majors.slice(-1);
-      last_4_of_last_major = version_tools.get_last_n_versions_of_major(versions, last_major, 4);
+      let [lastMajorVersion] = majors.slice(-1);
+      lastFourVersionsOfLastMajor = VersionTools.getLastNVersionsOfMajor(
+        versions,
+        lastMajorVersion,
+        4
+      );
     }
 
     // Return an object with all required version info
     return {
       majors,
-      last_4,
-      last_4_of_last_major,
+      lastFourVersions,
+      lastFourVersionsOfLastMajor,
     };
   } catch (error) {
     console.debug('error', error);
