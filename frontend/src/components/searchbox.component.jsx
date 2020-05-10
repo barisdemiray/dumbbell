@@ -38,6 +38,7 @@ function SearchBox({ handleChange, handleSubmit }) {
         onChange={(e) => updateChange(e.target.value)}
         onKeyDown={(e) => handleKeyDown(e)}
         placeholder="Package name, e.g. react"
+        autoFocus
       />
       <img
         src="./static/images/noun_Search_3179535.svg"
