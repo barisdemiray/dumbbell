@@ -3,6 +3,7 @@ import './App.css';
 
 import SearchBox from './components/searchbox.component';
 import ResultBox from './components/resultbox.component';
+import Spinner from './components/spinner.component';
 import * as PackageTools from './tools/package';
 
 function App() {
@@ -87,12 +88,13 @@ function App() {
    * Renders a loading feedback when we're waiting for server response.
    */
   const renderLoadingFeedback = () => {
-    let loadingFeedbackElement = null;
     if (loading) {
-      loadingFeedbackElement = <p>Loading</p>;
+      return (
+        <div className="LoadingFeedback">
+          <Spinner />
+        </div>
+      );
     }
-
-    return <div className="LoadingFeedback">{loadingFeedbackElement}</div>;
   };
 
   /**
