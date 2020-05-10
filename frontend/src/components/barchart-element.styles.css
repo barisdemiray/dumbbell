@@ -4,17 +4,19 @@
   justify-content: flex-end;
   align-items: center;
 
+  height: 15rem;
+
   padding: 2rem;
-  border: 1px solid purple;
+  border: 1px solid orange;
 }
 
 /* Define an animation for the bar chart element */
-@keyframes slideInFromLeft {
+@keyframes slideInFromBottom {
   from {
     height: 0rem;
   }
   to {
-    height: 15rem;
+    /* height: 100%; */
   }
 }
 
@@ -23,19 +25,24 @@
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
+
+  width: 1rem;
+  /* height: 100%; */
+
+  animation-name: slideInFromBottom;
+  animation-duration: 2s;
+  animation-delay: 0.5s;
 }
 
 .BarChartElementBar {
-  width: 1rem;
-  height: 15rem;
+  width: 100%;
+  height: auto;
+  min-height: 100%;
 
   margin: 0rem 1rem;
 
-  background-color: red;
-
-  animation-name: slideInFromLeft;
-  animation-duration: 2s;
-  animation-delay: 0.5s;
+  border-radius: 25px;
+  background-color: #f4a688;
 }
 
 .BarChartElementLabel {

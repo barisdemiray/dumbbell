@@ -48,6 +48,7 @@ function SearchBox({ handleChange, handleSubmit }) {
         src="./static/images/noun_Search_3179535.svg"
         className="SearchBoxIcon"
         onClick={() => submitChange()}
+        alt=""
       />
     </div>
   );
