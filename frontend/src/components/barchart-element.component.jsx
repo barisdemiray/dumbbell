@@ -11,7 +11,12 @@ function BarChartElement({ data }) {
    * Renders a barchart element, i.e. a bar.
    */
   const renderBar = () => {
-    return <div className="BarChartElement"></div>;
+    return (
+      <div className="BarChartElement">
+        <div className="BarChartElementBar"></div>
+        <div className="BarChartElementLabel">{data.version}</div>
+      </div>
+    );
   };
 
   return <div className="BarChartElementContainer">{renderBar()}</div>;

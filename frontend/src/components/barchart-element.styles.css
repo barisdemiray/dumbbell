@@ -19,6 +19,13 @@
 }
 
 .BarChartElement {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.BarChartElementBar {
   width: 1rem;
   height: 15rem;
 
@@ -29,4 +36,10 @@
   animation-name: slideInFromLeft;
   animation-duration: 2s;
   animation-delay: 0.5s;
+}
+
+.BarChartElementLabel {
+  color: #777;
+  font-size: 1rem;
+  margin-top: 1rem;
 }

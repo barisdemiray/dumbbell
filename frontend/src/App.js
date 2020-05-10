@@ -9,7 +9,32 @@ function App() {
   // Let's show a feedback while getting data from backend
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [resultData, setResultData] = useState({});
+  const [resultData, setResultData] = useState([
+    {
+      bundleSizeInBytes: 96212,
+      minifiedBundleSizeInBytes: 30377,
+      minifiedAndGzippedBundleSizeInBytes: 9897,
+      version: '16.11.0',
+    },
+    {
+      bundleSizeInBytes: 96149,
+      minifiedBundleSizeInBytes: 30377,
+      minifiedAndGzippedBundleSizeInBytes: 9898,
+      version: '16.12.0',
+    },
+    {
+      bundleSizeInBytes: 82394,
+      minifiedBundleSizeInBytes: 30182,
+      minifiedAndGzippedBundleSizeInBytes: 9907,
+      version: '16.13.0',
+    },
+    {
+      bundleSizeInBytes: 82394,
+      minifiedBundleSizeInBytes: 30182,
+      minifiedAndGzippedBundleSizeInBytes: 9908,
+      version: '16.13.1',
+    },
+  ]);
   const [packageName, setPackageName] = useState('');
 
   /**
