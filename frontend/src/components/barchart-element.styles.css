@@ -1,2 +1,32 @@
 .BarChartElementContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+
+  padding: 2rem;
+  border: 1px solid purple;
+}
+
+/* Define an animation for the bar chart element */
+@keyframes slideInFromLeft {
+  from {
+    height: 0rem;
+  }
+  to {
+    height: 15rem;
+  }
+}
+
+.BarChartElement {
+  width: 1rem;
+  height: 15rem;
+
+  margin: 0rem 1rem;
+
+  background-color: red;
+
+  animation-name: slideInFromLeft;
+  animation-duration: 2s;
+  animation-delay: 0.5s;
 }

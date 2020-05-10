@@ -1,2 +1,9 @@
 .BarChartContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: flex-end;
+
+  min-width: 60vw;
+  min-height: 40vh;
 }

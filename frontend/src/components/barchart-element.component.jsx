@@ -7,9 +7,14 @@ import './barchart-element.styles.css';
  * A component that renders a bar chart element with data.
  */
 function BarChartElement({ data }) {
-  return (
-    <div className="BarChartElementContainer">hello bar chart element {JSON.stringify(data)}</div>
-  );
+  /**
+   * Renders a barchart element, i.e. a bar.
+   */
+  const renderBar = () => {
+    return <div className="BarChartElement"></div>;
+  };
+
+  return <div className="BarChartElementContainer">{renderBar()}</div>;
 }
 
 // Check props
