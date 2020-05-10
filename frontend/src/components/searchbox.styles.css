@@ -14,6 +14,10 @@
   height: auto;
 }
 
+.SearchBoxIcon:hover {
+  cursor: pointer;
+}
+
 .SearchBoxInput {
   height: 20px;
   margin: 0;
