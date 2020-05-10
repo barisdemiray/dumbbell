@@ -24,7 +24,7 @@ const getBundleSizeInfoForRecentVersions = async (packageName) => {
   // - Install the package at that version
   // - Get size information of its bundle
   // - Uninstall the package
-  for (const version of versions.lastFourVersions.reverse()) {
+  for (const version of versions.lastFourVersions) {
     const packageNameWithVersion = packageName + '@' + version;
 
     console.debug(`Getting bundle info for version ${packageNameWithVersion}`);
