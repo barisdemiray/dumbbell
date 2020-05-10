@@ -11,16 +11,43 @@ const PathTools = require('./path');
  * @return {String} Installation path on success, null otherwise.
  */
 exports.installPackage = async function (packageName) {
-  // Generate a temp folder to install the package
+  // Generate a temp folder
   const tempFolder = PathTools.getTempFolderPath();
 
-  const args = ['add', packageName, '--modules-folder', tempFolder];
+  // Initialize a new package.json in the temp folder
+  const initArgs = ['init', '--yes'];
+  const initOpts = { cwd: tempFolder };
 
-  console.debug(`Installing package ${packageName} with command ${args} to Yarn`);
+  // Create the temp folder
+  try {
+    fs.mkdirSync(tempFolder);
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+
+  console.debug(`Initializing a new package.json in ${tempFolder} with Yarn`);
+  console.debug('args yarn init', initArgs);
+  console.debug('opts yarn init', initOpts);
 
   try {
-    const { stdout, stderr } = await execa('yarn', args);
-    return tempFolder;
+    const { stdout, stderr } = await execa('yarn', initArgs, initOpts);
+  } catch (error) {
+    console.error('error', error);
+    return null;
+  }
+
+  // Install the package
+  const addArgs = ['add', packageName];
+  const addOpts = { cwd: tempFolder };
+
+  console.debug(`Installing package ${packageName} with command ${addArgs} to Yarn`);
+  console.debug('args yarn add', addArgs);
+  console.debug('opts yarn add', addOpts);
+
+  try {
+    const { stdout, stderr } = await execa('yarn', addArgs, addOpts);
+    return path.join(tempFolder, 'node_modules');
   } catch (error) {
     console.error('error', error);
     return null;

@@ -2,6 +2,7 @@
 
 const http = require('http');
 const url = require('url');
+const path = require('path');
 
 const PackageTools = require('./tools/package');
 const BundleTools = require('./tools/bundle');
@@ -50,8 +51,10 @@ const getBundleSizeInfoForRecentVersions = async (packageName) => {
         bundleInfos.push(bundleInfo);
       }
 
-      // Success or not, remove the temporary modules folder
-      console.debug(`Removing temporary modules folder ${modulesFolder}`);
+      // Success or not, remove the temporary project folder, i.e. parent folder of
+      // the modules path of this installation
+      const projectFolderToRemove = path.normalize(path.join(modulesFolder, '..'));
+      console.debug(`Removing temporary project folder ${projectFolderToRemove}`);
       await FileTools.removeFolder(modulesFolder);
     }
 
