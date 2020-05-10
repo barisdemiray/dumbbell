@@ -28,7 +28,8 @@ exports.getMajorVersions = function (versionList) {
   // Remove duplicates from the list
   majorVersions = [...new Set(majorVersions)];
 
-  return majorVersions;
+  // Reverse the list to have the most recent data first
+  return majorVersions.reverse();
 };
 
 /**
@@ -45,8 +46,8 @@ exports.getLastNVersions = function (versionList, n) {
     return versions;
   }
 
-  // Or the last n
-  return versions.slice(-n);
+  // Or the last n (and reverse the list to have the most recent data first)
+  return versions.slice(-n).reverse();
 };
 
 exports.getLastNVersionsOfMajor = function (versionList, major, n) {
@@ -60,6 +61,6 @@ exports.getLastNVersionsOfMajor = function (versionList, major, n) {
     return versions;
   }
 
-  // Else take a slice of it
-  return versions.slice(-n);
+  // Else take a slice of it (and reverse the list to have the most recent data first)
+  return versions.slice(-n).reverse();
 };
