@@ -134,7 +134,6 @@ exports.findRecentVersions = async function (packageName) {
     let lastThreeVersionsOfLastMajor = [];
     if (majors) {
       let lastMajorVersion = majors[0];
-      console.debug('=== lastMajorVersion', lastMajorVersion);
       lastThreeVersionsOfLastMajor = VersionTools.getLastNVersionsOfMajor(
         versions,
         lastMajorVersion,

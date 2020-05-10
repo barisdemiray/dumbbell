@@ -27,6 +27,14 @@
   min-height: 3rem;
 }
 
+.SearchWarning {
+  font-size: 1rem;
+  color: #f1e05a;
+  margin-top: 2rem;
+
+  min-height: 3rem;
+}
+
 .ResultContainer {
   display: flex;
   flex-direction: center;

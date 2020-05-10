@@ -9,6 +9,7 @@ function App() {
   // Let's show a feedback while getting data from backend
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [warning, setWarning] = useState('');
   const [resultData, setResultData] = useState([]);
   const [packageName, setPackageName] = useState('');
 
@@ -21,8 +22,14 @@ function App() {
         .then((response) => response.json())
         .then((response) => {
           // When bundling fails we receive an empty array, I know it's sad
-          if (Array.isArray(response) && response.length === 0) {
-            setError("Internal error, package bundling must have failed. Hint: try with 'select'.");
+          if (Array.isArray(response)) {
+            if (response.length === 0) {
+              setError(
+                "Internal error, package bundling must have failed. Hint: try with 'select'."
+              );
+            } else if (response.length > 0 && response.length < 4) {
+              setWarning('Failed to retrieve bundle size info of some versions.');
+            }
           }
           setResultData(response);
           setLoading(false);
@@ -46,6 +53,7 @@ function App() {
       setError(result.reason);
     } else {
       setError('');
+      setWarning('');
     }
   };
 
@@ -62,10 +70,17 @@ function App() {
   };
 
   /**
-   * Renders an error if there is any. Note that the div is always rendered with a min-height to keep the layout.
+   * Renders the error message if there is one. Note that the div is always rendered with a min-height to keep the layout.
    */
   const renderError = () => {
     return <div className="SearchError">{error}</div>;
+  };
+
+  /**
+   * Renders the warning message if there is one. Note that the div is always rendered with a min-height to keep the layout.
+   */
+  const renderWarning = () => {
+    return <div className="SearchWarning">{warning}</div>;
   };
 
   /**
@@ -94,6 +109,7 @@ function App() {
       <div className="SearchContainer">
         <SearchBox handleChange={handleChange} handleSubmit={handleSubmit} />
         {renderError()}
+        {renderWarning()}
       </div>
       <div className="ResultContainer">
         <div className="ResultFeedback">{renderLoadingFeedback()}</div>
