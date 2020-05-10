@@ -20,7 +20,10 @@ function App() {
       fetch('http://localhost:8080/?package=' + packageName)
         .then((response) => response.json())
         .then((response) => {
-          console.log(response);
+          // When bundling fails we receive an empty array, I know it's sad
+          if (Array.isArray(response) && response.length === 0) {
+            setError("Internal error, package bundling must have failed. Hint: try with 'select'.");
+          }
           setResultData(response);
           setLoading(false);
         })

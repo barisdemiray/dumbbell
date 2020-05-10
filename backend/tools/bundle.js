@@ -30,7 +30,7 @@ exports.bundlePackage = async function (packageName) {
     return bundleFilename;
   } catch (error) {
     console.error('error', error);
-    return null;
+    throw Error('Failed to bundle package: ' + error);
   }
 };
 
@@ -40,7 +40,7 @@ exports.bundlePackage = async function (packageName) {
  * @param {String} bundleFileDir Directory in which bundle file is located.
  * @param {String} bundleFilename Name of the bundle file.
  * @todo Look for better minifiers.
- * @return {String}
+ * @return {String} Name of the minified bundle file.
  */
 exports.minifyBundleFile = async function (bundleFileDir, bundleFilename) {
   // Create a filename for the minified version, e.g. 91239128391.js -> 91239128391.min.js
@@ -55,7 +55,7 @@ exports.minifyBundleFile = async function (bundleFileDir, bundleFilename) {
     return minifiedBundleFilename;
   } catch (error) {
     console.error('error', error);
-    return null;
+    throw Error('Failed to minify bundle: ' + error);
   }
 };
 
@@ -95,12 +95,19 @@ exports.getBundleSizeInfo = async function (packageName) {
     // todo Cleanup all remove temp files
     // fs.unlinkSync(path.join(path.dirname(require.resolve(package_name)), temp_bundle_file_name));
 
+    // Return the result with a field indicating that all went fine
     return {
+      valid: true,
       bundleSizeInBytes,
       minifiedBundleSizeInBytes,
       minifiedAndGzippedBundleSizeInBytes,
     };
   } catch (error) {
     console.error(error);
+
+    // Return only an object that indicates that the process has been failed
+    return {
+      valid: false,
+    };
   }
 };

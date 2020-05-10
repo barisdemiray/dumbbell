@@ -12,39 +12,47 @@ const BundleTools = require('./tools/bundle');
  * @return {Array} Array of objects containing a 'size' property of every versions' bundle.
  */
 const getBundleSizeInfoForRecentVersions = async (packageName) => {
-  const versions = await PackageTools.findAvailableVersions(packageName);
+  try {
+    const versions = await PackageTools.findAvailableVersions(packageName);
 
-  let bundleInfos = [];
+    let bundleInfos = [];
 
-  if (!versions) {
+    if (!versions) {
+      return [];
+    }
+
+    // Iterate available versions and do the following for each of them
+    // - Install the package at that version
+    // - Get size information of its bundle
+    // - Uninstall the package
+    for (const version of versions.lastFourVersions) {
+      const packageNameWithVersion = packageName + '@' + version;
+
+      console.debug(`Getting bundle info for version ${packageNameWithVersion}`);
+
+      await PackageTools.installPackage(packageNameWithVersion);
+
+      // Get bundle size info first
+      let bundleInfo = await BundleTools.getBundleSizeInfo(packageName);
+
+      if (bundleInfo.valid) {
+        // Develop the object with package version
+        bundleInfo = Object.assign(bundleInfo, { version });
+
+        bundleInfos.push(bundleInfo);
+      }
+
+      // Success or not, remove the package
+      await PackageTools.uninstallPackage(packageName);
+    }
+
+    console.debug(`bundle info for ${packageName}`, bundleInfos);
+
+    return bundleInfos;
+  } catch (error) {
+    console.error(error);
     return [];
   }
-
-  // Iterate available versions and do the following for each of them
-  // - Install the package at that version
-  // - Get size information of its bundle
-  // - Uninstall the package
-  for (const version of versions.lastFourVersions) {
-    const packageNameWithVersion = packageName + '@' + version;
-
-    console.debug(`Getting bundle info for version ${packageNameWithVersion}`);
-
-    await PackageTools.installPackage(packageNameWithVersion);
-
-    // Get bundle size info first
-    let bundleInfo = await BundleTools.getBundleSizeInfo(packageName);
-
-    // Develop the object with package version
-    bundleInfo = Object.assign(bundleInfo, { version });
-
-    bundleInfos.push(bundleInfo);
-
-    await PackageTools.uninstallPackage(packageName);
-  }
-
-  console.debug(`bundle info for ${packageName}`, bundleInfos);
-
-  return bundleInfos;
 };
 
 // Let's create a basic server and set up CORS so our querystrings pass.

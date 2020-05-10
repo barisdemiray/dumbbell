@@ -41,7 +41,7 @@ function SearchBox({ handleChange, handleSubmit }) {
         type="text"
         onChange={(e) => updateChange(e.target.value)}
         onKeyDown={(e) => handleKeyDown(e)}
-        placeholder="Package name, e.g. react"
+        placeholder="Package name, e.g. select"
         autoFocus
       />
       <img

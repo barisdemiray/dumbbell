@@ -119,8 +119,14 @@ exports.findAvailableVersions = async function (packageName) {
 
   try {
     const { stdout, stderr } = await execa('yarn', args);
+    const yarnInfo = JSON.parse(stdout);
 
-    let versions = JSON.parse(stdout).data.versions;
+    // Be sure the package exists
+    if (yarnInfo.type === 'error') {
+      throw new Error(`Yarn returned error for package ${packageName}`);
+    }
+
+    let versions = yarnInfo.data.versions;
 
     // Get all major versions
     const majors = VersionTools.getMajorVersions(versions);
@@ -147,5 +153,6 @@ exports.findAvailableVersions = async function (packageName) {
     };
   } catch (error) {
     console.debug('error', error);
+    throw new Error('Failed to find versions. Package may not be existing.');
   }
 };
