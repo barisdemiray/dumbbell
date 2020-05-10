@@ -6,10 +6,19 @@ const url = require('url');
 const package_tools = require('./tools/package');
 const bundle_tools = require('./tools/bundle');
 
+/**
+ * Returns in an array the bundle size of a package for its last few versions.
+ * @param {String} Name of the package to be evaluated.
+ * @return {Array} Array of objects containing a 'size' property of every versions' bundle.
+ */
 const get_bundle_info = async (package_name) => {
   const versions = await package_tools.find_available_versions(package_name);
 
-  let bundle_infos = [];
+  let bundleInfo = [];
+
+  if (!versions) {
+    return [];
+  }
 
   // todo slice(-1) is temporary for tests
   for (const version of versions.last_4.slice(-1)) {
@@ -19,15 +28,15 @@ const get_bundle_info = async (package_name) => {
     await package_tools.install_package(package_name_with_version);
 
     const bundle_info = await bundle_tools.get_bundle_info(package_name);
-    bundle_infos.push(bundle_info);
+    bundleInfo.push(bundle_info);
 
     await package_tools.uninstall_package(package_name);
   }
 
-  // todo report versios here too!
-  console.debug(`bundle info for ${package_name}`, bundle_infos);
+  // TODO report versios here too!
+  console.debug(`bundle info for ${package_name}`, bundleInfo);
 
-  return bundle_infos;
+  return bundleInfo;
 };
 
 const server = http.createServer(function (req, res) {
@@ -43,8 +52,14 @@ const server = http.createServer(function (req, res) {
 
   get_bundle_info(package_name)
     .then((data) => {
-      res.statusCode = 200;
-      res.end(JSON.stringify(data[0], null, 2));
+      // There might still have been an error
+      if (!data) {
+        res.statusCode = 200;
+        res.end(JSON.stringify({ size: 0 }, null, 2));
+      } else {
+        res.statusCode = 200;
+        res.end(JSON.stringify(data[0], null, 2));
+      }
     })
     .catch((error) => {
       res.statusCode = 500;
