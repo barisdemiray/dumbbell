@@ -11,7 +11,6 @@ function App() {
   const [result, setResult] = useState({});
   const [packageName, setPackageName] = useState('');
 
-  // todo grab backend response here
   useEffect(() => {
     if (packageName) {
       fetch('http://localhost:8080/?package=' + packageName)
@@ -19,8 +18,12 @@ function App() {
         .then((response) => {
           console.log(response);
           setResult(response);
+          setLoading(false);
         })
-        .catch((error) => console.error(error));
+        .catch((error) => {
+          console.error(error);
+          setLoading(false);
+        });
     }
   }, [packageName]);
 
@@ -32,7 +35,9 @@ function App() {
 
     const result = PackageTools.isPackageNameValid(val);
     if (result.valid === false) {
-      setError(result.message);
+      setError(result.reason);
+    } else {
+      setError('');
     }
   };
 
@@ -40,6 +45,7 @@ function App() {
     if (val.length === 0) {
       setError('Package name cannot be empty');
     } else {
+      setLoading(true);
       setPackageName(val);
     }
   };
@@ -48,13 +54,25 @@ function App() {
     return <div className="SearchError">{error}</div>;
   };
 
+  const renderLoadingFeedback = () => {
+    let loadingFeedbackElement = null;
+    if (loading) {
+      loadingFeedbackElement = <p>Loading</p>;
+    }
+
+    return <div className="LoadingFeedback">{loadingFeedbackElement}</div>;
+  };
+
   return (
     <div className="App">
       <div className="SearchContainer">
         <SearchBox handleChange={handleChange} handleSubmit={handleSubmit} />
         {renderError()}
       </div>
-      <div className="ResultContainer">{JSON.stringify(result)}</div>
+      <div className="ResultContainer">
+        <div className="ResultFeedback">{renderLoadingFeedback()}</div>
+        <div className="Result">{JSON.stringify(result)}</div>
+      </div>
     </div>
   );
 }
