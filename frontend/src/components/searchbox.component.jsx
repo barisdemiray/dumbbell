@@ -1,10 +1,14 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import './searchbox.styles.css';
 
 /**
- * A component that displays a package search box. Keeps an internal state as well.
+ * A component that renders a package search input. Keeps an internal state as well.
+ *
+ * It submits user input to parent component following two events,
+ * - A click on the magnifier icon
+ * - Enter key in the input box
  */
 function SearchBox({ handleChange, handleSubmit }) {
   // Internal state for the user-provided query
@@ -49,6 +53,7 @@ function SearchBox({ handleChange, handleSubmit }) {
   );
 }
 
+// Check props
 SearchBox.propTypes = {
   handleChange: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
