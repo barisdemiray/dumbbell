@@ -12,6 +12,8 @@ const VersionTools = require('./version');
 exports.installPackage = async function (packageName) {
   const args = ['add', packageName];
 
+  console.debug(`Installing package ${packageName} with command ${args} to Yarn`);
+
   try {
     const { stdout, stderr } = await execa('yarn', args);
     return true;
@@ -28,6 +30,8 @@ exports.installPackage = async function (packageName) {
  */
 exports.uninstallPackage = async function (packageName) {
   const args = ['remove', packageName];
+
+  console.debug(`Uninstalling package ${packageName} with command ${args} to Yarn`);
 
   try {
     const { stdout, stderr } = await execa('yarn', args);
