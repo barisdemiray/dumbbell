@@ -1,5 +1,6 @@
 const execa = require('execa');
 const fs = require('fs');
+const del = require('del');
 
 /**
  * Gzips given file at given path and returns the path to this gzipped version.
@@ -18,6 +19,9 @@ exports.gzipFile = async function (fileDir, filename) {
 
   try {
     // todo check if webpack is in the path
+    console.debug('args gzipFile', args);
+    console.debug('opts gzipFile', opts);
+
     const { stdout, stderr } = await execa('gzip', args, opts);
 
     return gzippedFilename;
@@ -48,4 +52,17 @@ exports.getFileSizeInBytes = function (filePath) {
     console.error(error);
     return -1;
   }
+};
+
+/**
+ * Removes given folder with all its contents.
+ *
+ * @param {String} Full path to the directory to be removed.
+ * @return {Boolean} true on success, false otherwise.
+ */
+exports.removeFolder = async function (folderPath) {
+  // Pass force here (oh how much I don't like force in programming lexical) as we're removing
+  // most often a directory under the temp folder of the OS, which falls outside of the current
+  // working directory.
+  await del(folderPath, { force: true });
 };

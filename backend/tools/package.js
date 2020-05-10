@@ -1,25 +1,29 @@
 const execa = require('execa');
-const path = require('path');
 const fs = require('fs');
+const path = require('path');
 
 const VersionTools = require('./version');
+const PathTools = require('./path');
 
 /**
  * Installs package with given name using yarn.
  * @param {String} packageName Name of the package.
- * @return {Boolean} True on success, false otherwise.
+ * @return {String} Installation path on success, null otherwise.
  */
 exports.installPackage = async function (packageName) {
-  const args = ['add', packageName];
+  // Generate a temp folder to install the package
+  const tempFolder = PathTools.getTempFolderPath();
+
+  const args = ['add', packageName, '--modules-folder', tempFolder];
 
   console.debug(`Installing package ${packageName} with command ${args} to Yarn`);
 
   try {
     const { stdout, stderr } = await execa('yarn', args);
-    return true;
+    return tempFolder;
   } catch (error) {
     console.error('error', error);
-    return false;
+    return null;
   }
 };
 
@@ -45,13 +49,14 @@ exports.uninstallPackage = async function (packageName) {
 /**
  * Finds a package's entry point from its package.json, i.e. 'main'.
  * @param {String} packageName Name of the package.
+ * @param {String} modulesFolderPath Path to node_modules folder in which the package has been installed.
  * @return {String} Entry point of the package, i.e. corresponding script's file name.
  */
-exports.getPackageEntryPoint = async function (packageName) {
+exports.getPackageEntryPoint = async function (packageName, modulesFolderPath) {
   let packageEntryPoint = '';
 
   try {
-    const packageJsonPath = require.resolve(`${packageName}/package.json`);
+    const packageJsonPath = path.join(modulesFolderPath, packageName, 'package.json');
 
     // Load package.json only if it exists
     if (fs.existsSync(packageJsonPath)) {
@@ -71,13 +76,14 @@ exports.getPackageEntryPoint = async function (packageName) {
  * Recursively finds a package's dependencies and dependencies of its dependencies and dependencies of ...
  * @todo Look into 'yarn info' if it is easier.
  * @param {String} packageName Name of the package.
+ * @param {String} modulesFolderPath Path to node_modules folder in which the package has been installed.
  * @return {Array} An array of all the dependencies needed for given package.
  */
-exports.findPackageDependencies = function (packageName) {
+exports.findPackageDependencies = function (packageName, modulesFolderPath) {
   // Let's have a closure to be able to keep a cumulative list of dependencies
   function doFindPackageDependencies(packageName) {
     try {
-      const packageJsonPath = require.resolve(`${packageName}/package.json`);
+      const packageJsonPath = path.join(modulesFolderPath, packageName, 'package.json');
 
       // Load package.json only if it exists
       if (fs.existsSync(packageJsonPath)) {

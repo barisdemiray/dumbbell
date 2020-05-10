@@ -5,6 +5,7 @@ const url = require('url');
 
 const PackageTools = require('./tools/package');
 const BundleTools = require('./tools/bundle');
+const FileTools = require('./tools/file');
 
 /**
  * Returns in an array the bundle size of a package for its last few versions.
@@ -36,10 +37,11 @@ const getBundleSizeInfoForRecentVersions = async (packageName) => {
 
       console.debug(`Getting bundle info for version ${packageNameWithVersion}`);
 
-      await PackageTools.installPackage(packageNameWithVersion);
+      // Install the package to a temporary folder and get the path
+      const modulesFolder = await PackageTools.installPackage(packageNameWithVersion);
 
       // Get bundle size info first
-      let bundleInfo = await BundleTools.getBundleSizeInfo(packageName);
+      let bundleInfo = await BundleTools.getBundleSizeInfo(packageName, modulesFolder);
 
       if (bundleInfo.valid) {
         // Develop the object with package version
@@ -48,8 +50,9 @@ const getBundleSizeInfoForRecentVersions = async (packageName) => {
         bundleInfos.push(bundleInfo);
       }
 
-      // Success or not, remove the package
-      await PackageTools.uninstallPackage(packageName);
+      // Success or not, remove the temporary modules folder
+      console.debug(`Removing temporary modules folder ${modulesFolder}`);
+      await FileTools.removeFolder(modulesFolder);
     }
 
     console.debug(`bundle info for ${packageName}`, bundleInfos);

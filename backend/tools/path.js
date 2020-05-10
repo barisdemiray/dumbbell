@@ -1,12 +1,23 @@
 var crypto = require('crypto');
+var path = require('path');
+var os = require('os');
 
 /**
  * Creates a random name to be use as a temporary filename.
  *
  * @return {String} A random file name with 'temp' prefix.
  */
-exports.get_temp_filename = function () {
+exports.getTempFilename = function () {
   return 'temp-' + crypto.randomBytes(4).readUInt32LE(0);
+};
+
+/**
+ * Returns the path to a temporary folder in OS' temp directory.
+ * @return {String} Path to a temp folder.
+ * @todo Name is a bit confusing, as it's not returning the temp directory of the OS.
+ */
+exports.getTempFolderPath = function () {
+  return path.join(os.tmpdir(), this.getTempFilename());
 };
 
 /**

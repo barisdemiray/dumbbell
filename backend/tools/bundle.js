@@ -10,21 +10,27 @@ const PackageTools = require('./package');
  * Bundles given package installed in node_modules in a very very primitive way.
  *
  * @param {String} packageName Name of the package.
+ * @param {String} modulesFolderPath Path to node_modules folder in which the package has been installed.
  * @return {String} Name of the bundle file.
  */
-exports.bundlePackage = async function (packageName) {
+exports.bundlePackage = async function (packageName, modulesFolderPath) {
   try {
     // First find the entry point of this package in its package.json
-    const packageEntryPoint = await PackageTools.getPackageEntryPoint(packageName);
+    const packageEntryPoint = await PackageTools.getPackageEntryPoint(
+      packageName,
+      modulesFolderPath
+    );
 
-    const bundleFilename = PathTools.get_temp_filename() + '.js';
+    const bundleFilename = PathTools.getTempFilename() + '.js';
     const args = [packageEntryPoint, '--output-filename', bundleFilename];
-
-    console.debug('args bundle_package', args);
 
     // todo check return values of spawned processes
     // todo check if webpack is in the path
-    const opts = { cwd: path.join(path.dirname(require.resolve(`${packageName}/package.json`))) };
+    const opts = { cwd: path.join(modulesFolderPath, packageName) };
+
+    console.debug('args bundle_package', args);
+    console.debug('opts bundle_package', opts);
+
     const { stdout, stderr } = await execa('webpack', args, opts);
 
     return bundleFilename;
@@ -50,6 +56,10 @@ exports.minifyBundleFile = async function (bundleFileDir, bundleFilename) {
 
   try {
     // todo check if minify is in the path
+
+    console.debug('args minifyBundleFile', args);
+    console.debug('opts minifyBundleFile', opts);
+
     const { stdout, stderr } = await execa('minify', args, opts);
 
     return minifiedBundleFilename;
@@ -63,13 +73,14 @@ exports.minifyBundleFile = async function (bundleFileDir, bundleFilename) {
  * Princial entry point for collecting bundle info. It minifies and gzips and then queries file size.
  *
  * @param {String} packageName Name of the package to be evaluated.
+ * @param {String} modulesFolderPath Path to node_modules folder in which the package has been installed.
  * @return {Object} An object with 'size' property indicating size in bytes of the bundle.
  */
-exports.getBundleSizeInfo = async function (packageName) {
+exports.getBundleSizeInfo = async function (packageName, modulesFolderPath) {
   try {
-    const bundleFileDir = path.join(path.dirname(require.resolve(`${packageName}/package.json`)));
+    const bundleFileDir = path.join(modulesFolderPath, packageName);
 
-    const bundleFilename = await this.bundlePackage(packageName);
+    const bundleFilename = await this.bundlePackage(packageName, modulesFolderPath);
     console.debug('bundleFilename', bundleFilename);
 
     const minifiedBundleFilename = await this.minifyBundleFile(bundleFileDir, bundleFilename);
