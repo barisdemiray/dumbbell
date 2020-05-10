@@ -123,10 +123,10 @@ exports.findAvailableVersions = async function (packageName) {
     let versions = JSON.parse(stdout).data.versions;
 
     // Get all major versions
-    const majors = VersionTools.get_major_versions(versions);
+    const majors = VersionTools.getMajorVersions(versions);
 
     // Get last 4 versions, whatever the major is
-    const lastFourVersions = VersionTools.get_last_n_versions(versions, 4);
+    const lastFourVersions = VersionTools.getLastNVersions(versions, 4);
 
     // Get last 4 versions of the last major version
     let lastFourVersionsOfLastMajor = [];

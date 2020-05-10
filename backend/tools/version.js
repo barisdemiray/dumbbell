@@ -1,57 +1,65 @@
 const semver = require('semver');
 
 /**
- * Cleans invalid or pre-release values from a list with semvers.
+ * Cleans invalid or pre-release values from a list of versions.
+ * @param {Array} versionList List of versions.
+ * @return {Array} List of valid versions.
  */
-exports.clean_version_list = function (version_list) {
-  // console.log('received', arguments);
-
+exports.cleanVersionList = function (versionList) {
   // Remove all values that is not valid
-  let _versions = version_list.filter((version) => !semver.valid(version_list));
+  let versions = versionList.filter((version) => semver.valid(version));
 
   // Remove all versions that include a prerelease tag, e.g. alpha
-  return _versions.filter((version) => !semver.prerelease(version));
+  return versions.filter((version) => !semver.prerelease(version));
 };
 
-exports.get_major_versions = function (version_list) {
-  // console.log('received', arguments);
+/**
+ * Finds all major version numbers in given list of versions.
+ * @param {Array} versionList List of versions.
+ * @return {Array} List of major version numbers only.
+ */
+exports.getMajorVersions = function (versionList) {
+  let versions = this.cleanVersionList(versionList);
 
-  let _versions = this.clean_version_list(version_list);
+  // Get only the major versions
+  let majorVersions = [];
+  versions.map((version) => majorVersions.push(semver.major(version)));
 
-  let major_versions = [];
-  _versions.map((version) => major_versions.push(semver.major(version)));
-  major_versions = [...new Set(major_versions)];
+  // Remove duplicates from the list
+  majorVersions = [...new Set(majorVersions)];
 
-  return major_versions;
-  // console.log('major_versions', major_versions);
+  return majorVersions;
 };
 
-exports.get_last_n_versions = function (version_list, n) {
-  // console.log('received', arguments);
-
-  let _versions = this.clean_version_list(version_list);
+/**
+ * Returns last N versions from given list with versions.
+ * @param {Array} versionList List of versions.
+ * @param {Number} n Number of versions to return.
+ * @return Last n numbers, or less in case incoming list had less than n versions.
+ */
+exports.getLastNVersions = function (versionList, n) {
+  let versions = this.cleanVersionList(versionList);
 
   // If there are not enough versions, return the whole list
-  if (_versions.length <= n) {
-    return _versions;
+  if (versions.length <= n) {
+    return versions;
   }
 
-  return _versions.slice(-n);
+  // Or the last n
+  return versions.slice(-n);
 };
 
-exports.getLastNVersionsOfMajor = function (version_list, major, n) {
-  console.log('received', arguments);
-
-  let _versions = this.clean_version_list(version_list);
+exports.getLastNVersionsOfMajor = function (versionList, major, n) {
+  let versions = this.cleanVersionList(versionList);
 
   // Find all versions with given major version
-  _versions = _versions.filter((version) => semver.major(version) === major);
+  versions = versions.filter((version) => semver.major(version) === major);
 
   // If there are not enough versions with given major, return the whole list
-  if (_versions.length <= n) {
-    return _versions;
+  if (versions.length <= n) {
+    return versions;
   }
 
   // Else take a slice of it
-  return _versions.slice(-n);
+  return versions.slice(-n);
 };
