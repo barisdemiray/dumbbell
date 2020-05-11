@@ -45,6 +45,7 @@ function SearchBox({ handleChange, handleSubmit }) {
         autoFocus
       />
       <img
+        id="SearchBoxIcon"
         src="./static/images/noun_Search_3179535.svg"
         className="SearchBoxIcon"
         onClick={() => submitChange()}
