@@ -16,7 +16,7 @@
   height: 40vh;
   width: 90vw;
   margin: auto;
-  border: 1px solid red;
+  /* border: 1px solid red; */
 }
 
 .SearchError {
@@ -44,7 +44,7 @@
   height: 50vh;
   width: 90vw;
   margin: auto;
-  border: 1px solid blue;
+  /* border: 1px solid blue; */
 }
 
 @media screen and (max-width: 1024px) {

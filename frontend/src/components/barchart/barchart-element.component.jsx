@@ -26,8 +26,10 @@ function BarChartElement({ data, normalizedValue }) {
       <div className="BarChartElement" style={barStyle}>
         <div className="BarChartElementBar"></div>
         <div className="BarChartElementLabel">{data.version}</div>
-        {/* <div className="BarChartElementLabel">{data.minifiedBundleSizeInBytes}</div>
-        <div className="BarChartElementLabel">{normalizedValue}</div> */}
+        <div className="BarChartElementLabel">
+          {(data.minifiedAndGzippedBundleSizeInBytes / 1024.0).toFixed(2)}KiB
+        </div>
+        {/* <div className="BarChartElementLabel">{normalizedValue}</div> */}
       </div>
     );
   };

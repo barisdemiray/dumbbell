@@ -19,7 +19,10 @@ function OverallSize({ data }) {
 
     return (
       <div className="OverallSizeContainer">
-        <div className="OverallSizeTitle">Bundle size</div>
+        <div className="OverallSizeInfo">
+          <div className="OverallSizeTitle">Bundle size</div>
+          <div className="OverallSizeDisplayedVersion">v{data.version}</div>
+        </div>
         <div className="OverallSize">
           <div>
             <span className="OverallSizeValue">{minifiedBundleSizeInKiloBytes}</span>
