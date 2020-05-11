@@ -6,17 +6,12 @@ const VersionTools = require('./version');
 const PathTools = require('./path');
 
 /**
- * Installs package with given name using yarn.
- * @param {String} packageName Name of the package.
- * @return {String} Installation path on success, null otherwise.
+ * Initializes a project in a temporary folder.
+ * @return {String} Installation path of this new project on success, null otherwise.
  */
-exports.installPackage = async function (packageName) {
+exports.initializeProject = async function () {
   // Generate a temp folder
   const tempFolder = PathTools.getTempFolderPath();
-
-  // Initialize a new package.json in the temp folder
-  const initArgs = ['init', '--yes'];
-  const initOpts = { cwd: tempFolder };
 
   // Create the temp folder
   try {
@@ -26,20 +21,52 @@ exports.installPackage = async function (packageName) {
     return null;
   }
 
-  console.debug(`Initializing a new package.json in ${tempFolder} with Yarn`);
-  console.debug('args yarn init', initArgs);
-  console.debug('opts yarn init', initOpts);
-
   try {
-    const { stdout, stderr } = await execa('yarn', initArgs, initOpts);
+    // Initialize a new package.json in the temp folder
+    const initArgs = ['init', '--yes'];
+    const initOpts = { cwd: tempFolder };
+
+    console.debug(`Initializing a new package.json in ${tempFolder} with Yarn`);
+    console.debug('args yarn init', initArgs);
+    console.debug('opts yarn init', initOpts);
+
+    await execa('yarn', initArgs, initOpts);
+
+    // Install basic tools we need
+    const addArgs = ['add', 'minify'];
+    const addOpts = { cwd: tempFolder };
+
+    console.debug(`Installing minify in ${tempFolder} with Yarn`);
+    console.debug('args yarn add', addArgs);
+    console.debug('opts yarn add', addOpts);
+
+    await execa('yarn', addArgs, addOpts);
+
+    return tempFolder;
   } catch (error) {
     console.error('error', error);
+    return null;
+  }
+};
+
+/**
+ * Installs package with given name using yarn.
+ * @param {String} packageName Name of the package.
+ * @return {String} Installation path on success, null otherwise.
+ */
+exports.installPackage = async function (packageName) {
+  // Initialize a new project
+  let tempProjectPath = '';
+  try {
+    tempProjectPath = await this.initializeProject();
+  } catch (error) {
+    console.error(error);
     return null;
   }
 
   // Install the package
   const addArgs = ['add', packageName];
-  const addOpts = { cwd: tempFolder };
+  const addOpts = { cwd: tempProjectPath };
 
   console.debug(`Installing package ${packageName} with command ${addArgs} to Yarn`);
   console.debug('args yarn add', addArgs);
@@ -47,7 +74,7 @@ exports.installPackage = async function (packageName) {
 
   try {
     const { stdout, stderr } = await execa('yarn', addArgs, addOpts);
-    return path.join(tempFolder, 'node_modules');
+    return path.join(tempProjectPath, 'node_modules');
   } catch (error) {
     console.error('error', error);
     return null;
