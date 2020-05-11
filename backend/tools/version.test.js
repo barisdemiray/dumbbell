@@ -117,10 +117,10 @@ describe('Version tools behaves correctly', () => {
       expect(lastThreeOfMajorFour).toContain('4.5.0');
       expect(lastThreeOfMajorFour).toContain('4.4.0');
 
-      expect(lastThree).not.toContain('6.0.0');
-      expect(lastThree).not.toContain('3.0.0');
-      expect(lastThree).not.toContain('2.0.0');
-      expect(lastThree).not.toContain('1.0.0');
+      expect(lastThreeOfMajorFour).not.toContain('6.0.0');
+      expect(lastThreeOfMajorFour).not.toContain('3.0.0');
+      expect(lastThreeOfMajorFour).not.toContain('2.0.0');
+      expect(lastThreeOfMajorFour).not.toContain('1.0.0');
     });
 
     /**
