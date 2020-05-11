@@ -106,6 +106,16 @@ yarn start
 
 ## Testing
 
+There are unit tests for both frontend,
+
+![Frontend unittests](/doc/unittest_frontend.png)
+
+and the backend,
+
+![Backend unittests](/doc/unittest_backend.png)
+
+with _fair_ coverage. At the backend I wrote tests only to two files for demonstration purposes.
+
 There is a helper `gulp` configuration that launches unit tests for both backend and frontend.
 
 ```shell
