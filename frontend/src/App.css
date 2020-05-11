@@ -7,13 +7,35 @@
   margin: 2rem;
 }
 
+.Header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  margin-top: 2rem;
+}
+
+.HeaderIcon {
+  width: 4rem;
+  height: auto;
+}
+
+.HeaderTitle {
+  font-size: 3rem;
+  text-transform: uppercase;
+  font-weight: 100;
+  color: #666;
+  margin-top: 0.5rem;
+}
+
 .SearchContainer {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 
-  height: 40vh;
+  height: 30vh;
   width: 90vw;
   margin: auto;
   /* border: 1px solid red; */
@@ -22,17 +44,17 @@
 .SearchError {
   font-size: 1rem;
   color: red;
-  margin-top: 2rem;
+  margin-top: 1rem;
 
-  min-height: 3rem;
+  min-height: 2rem;
 }
 
 .SearchWarning {
   font-size: 1rem;
   color: #f1e05a;
-  margin-top: 2rem;
+  margin-top: 1rem;
 
-  min-height: 3rem;
+  min-height: 2rem;
 }
 
 .ResultContainer {
@@ -41,13 +63,21 @@
   justify-content: center;
   align-items: center;
 
-  height: 50vh;
+  height: 40vh;
   width: 90vw;
   margin: auto;
   /* border: 1px solid blue; */
 }
 
 @media screen and (max-width: 1024px) {
+  .HeaderIcon {
+    width: 3rem;
+  }
+
+  .HeaderTitle {
+    font-size: 2rem;
+  }
+
   .App {
     margin: 0.5rem;
   }

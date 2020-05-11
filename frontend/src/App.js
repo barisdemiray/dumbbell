@@ -111,6 +111,10 @@ function App() {
 
   return (
     <div className="App">
+      <div className="Header">
+        <img className="HeaderIcon" src="./static/images/noun_Weight_9409.svg" alt="" />
+        <span className="HeaderTitle">dumbbell</span>
+      </div>
       <div className="SearchContainer">
         <SearchBox handleChange={handleChange} handleSubmit={handleSubmit} />
         {renderError()}

@@ -1,4 +1,4 @@
-# bundled
+# Dumbbell
 
 A simpler (and I mean it) clone of bundlephobia.com. It helps to figure out possible overhead of an NPM package install.
 
@@ -18,7 +18,9 @@ Backend is a Node.js application that uses the built-in `http` to create a simpl
 
 Frontend is a React application based on a `create-react-app` boilerplate. It is designed to have a basic functionality with proper error reporting and visual feedbacks for a moderate user experience.
 
-Frontend components are as below.
+![Result screenshot](/doc/result.png)
+
+Underlying frontend components are as below.
 
 ![Frontend Components](/doc/frontend.png)
 
