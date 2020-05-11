@@ -206,14 +206,10 @@ exports.findRecentVersions = async function (packageName) {
     }
 
     // Get last version of the previous major
-    let lastVersionOfPreviousMajor = '';
+    let lastVersionOfPreviousMajor = [];
     if (majors.length >= 2) {
       const previousMajor = majors[1];
-      lastVersionOfPreviousMajor = VersionTools.getLastNVersionsOfMajor(
-        versions,
-        previousMajor,
-        1
-      )[0];
+      lastVersionOfPreviousMajor = VersionTools.getLastNVersionsOfMajor(versions, previousMajor, 1);
     }
 
     // Return an object with all required version info

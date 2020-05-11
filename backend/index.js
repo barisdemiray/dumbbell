@@ -26,8 +26,10 @@ const getBundleSizeInfoForRecentVersions = async (packageName) => {
     // Make a list of all versions requested
     const allVersionsToEvaluate = [
       ...versions.lastThreeVersionsOfLastMajor,
-      versions.lastVersionOfPreviousMajor,
+      ...versions.lastVersionOfPreviousMajor,
     ];
+
+    console.debug('I will iterate on versions', allVersionsToEvaluate);
 
     // Iterate available versions and do the following for each of them
     // - Install the package at that version
