@@ -37,6 +37,9 @@ function App() {
         })
         .catch((error) => {
           console.error(error);
+          setError(
+            'Internal error, cannot talk to the server. Would you be so kind to let me know about this at baris.demiray@gmail.com, please? :)'
+          );
           setLoading(false);
         });
     }
