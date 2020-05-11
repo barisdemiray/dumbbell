@@ -26,4 +26,19 @@ gulp.task('start', function (done) {
  * - Show a welcome message
  * - Start the backend and the frontend
  */
-gulp.task('start', gulp.series('welcome', 'start'));
+gulp.task('run', gulp.series('welcome', 'start'));
+
+/**
+ * Run unit tests.
+ */
+gulp.task('test', function (done) {
+  console.log('Starting backend tests');
+  spawn('yarn', ['test'], { cwd: 'backend/', stdio: 'inherit' }).on('close', done);
+
+  // Here we disable code change watching since we want tests to run once
+  console.log('Starting frontend tests');
+  spawn('yarn', ['test', '--watchAll=false', '--testTimeout=30000'], {
+    cwd: 'frontend/',
+    stdio: 'inherit',
+  }).on('close', done);
+});
