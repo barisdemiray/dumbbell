@@ -21,7 +21,7 @@ function ResultBox({ resultData }) {
     setAllBundleResultData(resultData);
 
     // Only the most recent version's result data will be displayed in detail
-    const [lastResultData] = resultData.slice(-1);
+    const [lastResultData] = resultData.slice(0, 1);
     setMostRecentBundlesResultData(lastResultData);
   }, [resultData]);
 
