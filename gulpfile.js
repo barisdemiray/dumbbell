@@ -2,6 +2,17 @@ var gulp = require('gulp');
 var spawn = require('child_process').spawn;
 
 /**
+ * Runs dependencies of both frontend and backend.
+ */
+gulp.task('install', function (done) {
+  console.log('Installing backend dependencies');
+  spawn('yarn', ['install'], { cwd: 'backend/', stdio: 'inherit' }).on('close', done);
+
+  console.log('Installing frontend dependencies');
+  spawn('yarn', ['install'], { cwd: 'frontend/', stdio: 'inherit' }).on('close', done);
+});
+
+/**
  * Simply shows a welcome message.
  */
 gulp.task('welcome', function (done) {
