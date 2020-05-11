@@ -1,0 +1,12 @@
+{
+  "name": "bundled",
+  "version": "1.0.0",
+  "description": "A full-stack app to find out NPM package install overhead",
+  "repository": "git@github.com:barisdemiray/bundled.git",
+  "author": "Baris Demiray <baris.demiray@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "gulp": "^4.0.2"
+  }
+}
