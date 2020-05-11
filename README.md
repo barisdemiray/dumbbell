@@ -60,6 +60,14 @@ sudo apt-get install -y gzip
 
 First of all, the dependencies of both frontend and backend have to be installed.
 
+There is a `Gulp` task for this.
+
+```shell
+gulp install
+```
+
+If not it can be done manually as shown below.
+
 ```shell
 pushd backend
 yarn install
