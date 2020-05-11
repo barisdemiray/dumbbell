@@ -41,6 +41,12 @@ const getBundleSizeInfoForRecentVersions = async (packageName) => {
       // Install the package to a temporary folder and get the path
       const modulesFolder = await PackageTools.installPackage(packageNameWithVersion);
 
+      // If the installation has failed, try with the next version
+      if (!modulesFolder) {
+        console.error(`Failed at installing ${packageNameWithVersion}`);
+        continue;
+      }
+
       // Get bundle size info first
       let bundleInfo = await BundleTools.getBundleSizeInfo(packageName, modulesFolder);
 
