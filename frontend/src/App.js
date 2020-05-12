@@ -19,14 +19,14 @@ function App() {
    */
   useEffect(() => {
     if (packageName) {
-      fetch('http://localhost:8080/?package=' + packageName)
+      fetch(process.env.REACT_APP_API_URL + '/?package=' + packageName)
         .then((response) => response.json())
         .then((response) => {
           // When bundling fails we receive an empty array, I know it's sad
           if (Array.isArray(response)) {
             if (response.length === 0) {
               setError(
-                "Internal error, package bundling must have failed. Hint: try with 'select'."
+                "Internal error, package bundling must have failed. Hint: try with 'lodash'."
               );
             } else if (response.length > 0 && response.length < 4) {
               setWarning('Failed to retrieve bundle size info of some versions.');
