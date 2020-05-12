@@ -9,7 +9,7 @@ function Spinner() {
   return (
     <div className="SpinnerContainer">
       <div className="Spinner"></div>
-      <div className="SpinnerNote">Please be patient, this takes up to 1 minute.</div>
+      <div className="SpinnerNote">Please be patient, this takes up to 2-3 minutes.</div>
     </div>
   );
 }
