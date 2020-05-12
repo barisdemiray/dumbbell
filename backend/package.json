@@ -6,7 +6,7 @@
   "author": "Baris Demiray",
   "license": "MIT",
   "scripts": {
-    "build": "babel src -d lib",
+    "build": "yarn test",
     "start": "node index.js",
     "start_backend": "node index.js",
     "test": "jest"
