@@ -6,11 +6,11 @@ It is composed of a frontend and a backend. Frontend lets the user to enter then
 
 - Install the package in a temporary environment
 - Create the bundle of the package using `webpack`
-- Minify the bundle using `minify`
+- Minify the bundle using `uglify-js`
 - Gzip the minified bundle using `gzip`
 - Retrieve file size of the result file
 
-Result is reported on the frontend like below.
+Result is reported on the frontend like shown in the following section.
 
 ## Design
 
@@ -24,6 +24,10 @@ Underlying frontend components are as below.
 
 ![Frontend Components](/doc/frontend.png)
 
+## Development
+
+Further directions/commands are probably too specific to my development environment running on Ubuntu 19.10.
+
 ## Prerequisites
 
 This project has following dependencies.
@@ -31,13 +35,8 @@ This project has following dependencies.
 - Node.js (Backend)
 
 ```shell
+curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
 sudo apt-get install -y nodejs
-```
-
-- minify (Backend)
-
-```shell
-yarn global add minify
 ```
 
 - Yarn or NPM (Frontend and Backend)
