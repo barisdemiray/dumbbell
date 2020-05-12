@@ -14,6 +14,8 @@ function App() {
   const [resultData, setResultData] = useState([]);
   const [packageName, setPackageName] = useState('');
 
+  console.log('API is at', process.env.REACT_APP_API_URL);
+
   /**
    * Initiates server connection when there is a package name to query.
    */
