@@ -29,7 +29,7 @@ const getBundleSizeInfoForRecentVersions = async (packageName) => {
       ...versions.lastVersionOfPreviousMajor,
     ];
 
-    console.debug('I will iterate on versions', allVersionsToEvaluate);
+    console.info('I will iterate on versions', allVersionsToEvaluate);
 
     // Iterate available versions and do the following for each of them
     // - Install the package at that version
@@ -38,7 +38,7 @@ const getBundleSizeInfoForRecentVersions = async (packageName) => {
     for (const version of allVersionsToEvaluate) {
       const packageNameWithVersion = packageName + '@' + version;
 
-      console.debug(`Getting bundle info for version ${packageNameWithVersion}`);
+      console.info(`Getting bundle info for version ${packageNameWithVersion}`);
 
       // Install the package to a temporary folder and get the path
       const modulesFolder = await PackageTools.installPackage(packageNameWithVersion);
@@ -62,11 +62,11 @@ const getBundleSizeInfoForRecentVersions = async (packageName) => {
       // Success or not, remove the temporary project folder, i.e. parent folder of
       // the modules path of this installation
       const projectFolderToRemove = path.normalize(path.join(modulesFolder, '..'));
-      console.debug(`Removing temporary project folder ${projectFolderToRemove}`);
+      console.info(`Removing temporary project folder ${projectFolderToRemove}`);
       await FileTools.removeFolder(modulesFolder);
     }
 
-    console.debug(`bundle info for ${packageName}`, bundleInfos);
+    console.info(`bundle info for ${packageName}`, bundleInfos);
 
     return bundleInfos;
   } catch (error) {
@@ -85,7 +85,7 @@ const server = http.createServer(function (req, res) {
   let query = url.parse(req.url, true).query;
   var packageName = query.package;
 
-  console.debug(`User is asking about the package '${packageName}'`);
+  console.info(`User is asking about the package '${packageName}'`);
 
   // Enable CORS requests to allow querystrings
   res.setHeader('Access-Control-Allow-Origin', '*');

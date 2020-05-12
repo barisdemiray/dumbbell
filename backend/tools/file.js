@@ -19,8 +19,8 @@ exports.gzipFile = async function (fileDir, filename) {
 
   try {
     // todo check if webpack is in the path
-    console.debug('args gzipFile', args);
-    console.debug('opts gzipFile', opts);
+    console.info('args gzipFile', args);
+    console.info('opts gzipFile', opts);
 
     const { stdout, stderr } = await execa('gzip', args, opts);
 

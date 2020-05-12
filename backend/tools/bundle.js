@@ -28,8 +28,8 @@ exports.bundlePackage = async function (packageName, modulesFolderPath) {
     // todo check if webpack is in the path
     const opts = { cwd: path.join(modulesFolderPath, packageName) };
 
-    console.debug('args bundle_package', args);
-    console.debug('opts bundle_package', opts);
+    console.info('args bundle_package', args);
+    console.info('opts bundle_package', opts);
 
     const { stdout, stderr } = await execa('webpack', args, opts);
 
@@ -57,8 +57,8 @@ exports.minifyBundleFile = async function (bundleFileDir, bundleFilename) {
   try {
     // todo check if minify is in the path
 
-    console.debug('args minifyBundleFile', args);
-    console.debug('opts minifyBundleFile', opts);
+    console.info('args minifyBundleFile', args);
+    console.info('opts minifyBundleFile', opts);
 
     const { stdout, stderr } = await execa('minify', args, opts);
 
@@ -81,16 +81,16 @@ exports.getBundleSizeInfo = async function (packageName, modulesFolderPath) {
     const bundleFileDir = path.join(modulesFolderPath, packageName);
 
     const bundleFilename = await this.bundlePackage(packageName, modulesFolderPath);
-    console.debug('bundleFilename', bundleFilename);
+    console.info('bundleFilename', bundleFilename);
 
     const minifiedBundleFilename = await this.minifyBundleFile(bundleFileDir, bundleFilename);
-    console.debug('minifiedBundleFilename', minifiedBundleFilename);
+    console.info('minifiedBundleFilename', minifiedBundleFilename);
 
     const gzippedAndMinifiedBundleFilename = await FileTools.gzipFile(
       bundleFileDir,
       minifiedBundleFilename
     );
-    console.debug('gzippedAndMinifiedBundleFilename', gzippedAndMinifiedBundleFilename);
+    console.info('gzippedAndMinifiedBundleFilename', gzippedAndMinifiedBundleFilename);
 
     // Report size of bundle size, minified bundle size and finally minified and gzipped bundle size
     const bundleSizeInBytes = FileTools.getFileSizeInBytes(

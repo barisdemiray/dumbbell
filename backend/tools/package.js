@@ -26,9 +26,9 @@ exports.initializeProject = async function () {
     const initArgs = ['init', '--yes'];
     const initOpts = { cwd: tempFolder };
 
-    console.debug(`Initializing a new package.json in ${tempFolder} with Yarn`);
-    console.debug('args yarn init', initArgs);
-    console.debug('opts yarn init', initOpts);
+    console.info(`Initializing a new package.json in ${tempFolder} with Yarn`);
+    console.info('args yarn init', initArgs);
+    console.info('opts yarn init', initOpts);
 
     await execa('yarn', initArgs, initOpts);
 
@@ -36,9 +36,9 @@ exports.initializeProject = async function () {
     const addArgs = ['add', 'minify'];
     const addOpts = { cwd: tempFolder };
 
-    console.debug(`Installing minify in ${tempFolder} with Yarn`);
-    console.debug('args yarn add', addArgs);
-    console.debug('opts yarn add', addOpts);
+    console.info(`Installing minify in ${tempFolder} with Yarn`);
+    console.info('args yarn add', addArgs);
+    console.info('opts yarn add', addOpts);
 
     await execa('yarn', addArgs, addOpts);
 
@@ -68,9 +68,9 @@ exports.installPackage = async function (packageName) {
   const addArgs = ['add', packageName];
   const addOpts = { cwd: tempProjectPath };
 
-  console.debug(`Installing package ${packageName} with command ${addArgs} to Yarn`);
-  console.debug('args yarn add', addArgs);
-  console.debug('opts yarn add', addOpts);
+  console.info(`Installing package ${packageName} with command ${addArgs} to Yarn`);
+  console.info('args yarn add', addArgs);
+  console.info('opts yarn add', addOpts);
 
   try {
     const { stdout, stderr } = await execa('yarn', addArgs, addOpts);
@@ -89,7 +89,7 @@ exports.installPackage = async function (packageName) {
 exports.uninstallPackage = async function (packageName) {
   const args = ['remove', packageName];
 
-  console.debug(`Uninstalling package ${packageName} with command ${args} to Yarn`);
+  console.info(`Uninstalling package ${packageName} with command ${args} to Yarn`);
 
   try {
     const { stdout, stderr } = await execa('yarn', args);
@@ -146,7 +146,7 @@ exports.findPackageDependencies = function (packageName, modulesFolderPath) {
         overallDependencyList.push(packageName);
 
         for (const dep in dependencies) {
-          console.debug(`Found dependency ${dep} of ${packageName}`);
+          console.info(`Found dependency ${dep} of ${packageName}`);
           overallDependencyList.push(dep);
 
           // Dive again for this very package's dependencies
@@ -218,7 +218,7 @@ exports.findRecentVersions = async function (packageName) {
       lastVersionOfPreviousMajor,
     };
   } catch (error) {
-    console.debug('error', error);
+    console.info('error', error);
     throw new Error('Failed to find versions. Package may not be existing.');
   }
 };
