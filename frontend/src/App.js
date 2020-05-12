@@ -21,7 +21,7 @@ function App() {
    */
   useEffect(() => {
     if (packageName) {
-      fetch(process.env.REACT_APP_API_URL + '/?package=' + packageName)
+      fetch(process.env.REACT_APP_API_URL + '?package=' + packageName)
         .then((response) => response.json())
         .then((response) => {
           // When bundling fails we receive an empty array, I know it's sad

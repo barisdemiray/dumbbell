@@ -12,6 +12,8 @@ It is composed of a frontend and a backend. Frontend lets the user to enter then
 
 Result is reported on the frontend like shown in the following section.
 
+It is deployed on https://dumbbell.herokuapp.com/ but please be patient as the backend is on a Docker on a small DigitalOcean droplet. Thanks.
+
 ## Design
 
 Backend is a Node.js application that uses the built-in `http` to create a simple web server. Then, mostly using the module `execa` it carries out the tasks listed above and sends back information to frontend.
