@@ -77,7 +77,7 @@ const getBundleSizeInfoForRecentVersions = async (packageName) => {
 
 // Let's create a basic server and set up CORS so our querystrings pass.
 // TODO Use here process.env.(HOST|PORT)
-const SERVER_HOST = '0.0.0.0';
+const SERVER_HOST = 'localhost';
 const SERVER_PORT = 80;
 const OK_CODE = 200;
 const KO_CODE = 500;
