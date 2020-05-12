@@ -40,17 +40,18 @@ const getBundleSizeInfoForRecentVersions = async (packageName) => {
 
       console.info(`Getting bundle info for version ${packageNameWithVersion}`);
 
-      // Install the package to a temporary folder and get the path
-      const modulesFolder = await PackageTools.installPackage(packageNameWithVersion);
+      // Install the package to a temporary folder and get the path to this new temporary
+      // project's root
+      const projectFolder = await PackageTools.installPackage(packageNameWithVersion);
 
       // If the installation has failed, try with the next version
-      if (!modulesFolder) {
+      if (!projectFolder) {
         console.error(`Failed at installing ${packageNameWithVersion}`);
         continue;
       }
 
       // Get bundle size info first
-      let bundleInfo = await BundleTools.getBundleSizeInfo(packageName, modulesFolder);
+      let bundleInfo = await BundleTools.getBundleSizeInfo(packageName, projectFolder);
 
       if (bundleInfo.valid) {
         // Develop the object with package version
@@ -61,9 +62,8 @@ const getBundleSizeInfoForRecentVersions = async (packageName) => {
 
       // Success or not, remove the temporary project folder, i.e. parent folder of
       // the modules path of this installation
-      const projectFolderToRemove = path.normalize(path.join(modulesFolder, '..'));
-      console.info(`Removing temporary project folder ${projectFolderToRemove}`);
-      await FileTools.removeFolder(modulesFolder);
+      console.info(`Removing temporary project folder ${projectFolder}`);
+      await FileTools.removeFolder(projectFolder);
     }
 
     console.info(`bundle info for ${packageName}`, bundleInfos);

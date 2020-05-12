@@ -10,30 +10,31 @@ const PackageTools = require('./package');
  * Bundles given package installed in node_modules in a very very primitive way.
  *
  * @param {String} packageName Name of the package.
- * @param {String} modulesFolderPath Path to node_modules folder in which the package has been installed.
- * @return {String} Name of the bundle file.
+ * @param {String} projectPath Path to project folder in which the package has been installed.
+ * @return {String} Path to the bundled file relative to the project folder, i.e. dist/temp-1130929008.js.
  */
-exports.bundlePackage = async function (packageName, modulesFolderPath) {
+exports.bundlePackage = async function (packageName, projectPath) {
   try {
     // First find the entry point of this package in its package.json
-    const packageEntryPoint = await PackageTools.getPackageEntryPoint(
-      packageName,
-      modulesFolderPath
-    );
+    const packageEntryPoint = await PackageTools.getPackageEntryPoint(packageName, projectPath);
 
     const bundleFilename = PathTools.getTempFilename() + '.js';
-    const args = [packageEntryPoint, '--output-filename', bundleFilename];
+    const args = [
+      'node_modules/webpack/bin/webpack.js',
+      path.join('node_modules', packageName, packageEntryPoint),
+      '--output-filename',
+      bundleFilename,
+    ];
 
-    // todo check return values of spawned processes
-    // todo check if webpack is in the path
-    const opts = { cwd: path.join(modulesFolderPath, packageName) };
+    // TODO check return values of spawned processes
+    const opts = { cwd: projectPath };
 
     console.info('args bundle_package', args);
     console.info('opts bundle_package', opts);
 
-    const { stdout, stderr } = await execa('webpack', args, opts);
+    const { stdout, stderr } = await execa('node', args, opts);
 
-    return bundleFilename;
+    return path.join('dist', bundleFilename);
   } catch (error) {
     console.error('error', error);
     throw Error('Failed to bundle package: ' + error);
@@ -43,26 +44,30 @@ exports.bundlePackage = async function (packageName, modulesFolderPath) {
 /**
  * Minifies given bundle file using 'minify'.
  *
- * @param {String} bundleFileDir Directory in which bundle file is located.
- * @param {String} bundleFilename Name of the bundle file.
- * @todo Look for better minifiers.
- * @return {String} Name of the minified bundle file.
+ * @param {String} bundlePath Path to the bundle file relative to the project folder.
+ * @param {String} projectPath Path of the project where this bundle and corresponding package are found.
+ * @return {String} Path to the minified bundle file relative to the project root folder.
  */
-exports.minifyBundleFile = async function (bundleFileDir, bundleFilename) {
+exports.minifyBundleFile = async function (bundlePath, projectPath) {
   // Create a filename for the minified version, e.g. 91239128391.js -> 91239128391.min.js
-  const minifiedBundleFilename = PathTools.getMinifiedFilename(bundleFilename);
-  const args = [bundleFilename, '-o', minifiedBundleFilename];
-  const opts = { cwd: bundleFileDir };
+  const minifiedBundlePath = PathTools.getMinifiedFilename(bundlePath);
+  const args = [
+    'node_modules/uglify-js/bin/uglifyjs',
+    '--mangle',
+    '-o',
+    minifiedBundlePath,
+    '--',
+    bundlePath,
+  ];
+  const opts = { cwd: projectPath };
 
   try {
-    // todo check if minify is in the path
-
     console.info('args minifyBundleFile', args);
     console.info('opts minifyBundleFile', opts);
 
-    const { stdout, stderr } = await execa('minify', args, opts);
+    const { stdout, stderr } = await execa('node', args, opts);
 
-    return minifiedBundleFilename;
+    return minifiedBundlePath;
   } catch (error) {
     console.error('error', error);
     throw Error('Failed to minify bundle: ' + error);
@@ -73,38 +78,28 @@ exports.minifyBundleFile = async function (bundleFileDir, bundleFilename) {
  * Princial entry point for collecting bundle info. It minifies and gzips and then queries file size.
  *
  * @param {String} packageName Name of the package to be evaluated.
- * @param {String} modulesFolderPath Path to node_modules folder in which the package has been installed.
+ * @param {String} projectPath Path to the project where given package has been installed.
  * @return {Object} An object with 'size' property indicating size in bytes of the bundle.
  */
-exports.getBundleSizeInfo = async function (packageName, modulesFolderPath) {
+exports.getBundleSizeInfo = async function (packageName, projectPath) {
   try {
-    const bundleFileDir = path.join(modulesFolderPath, packageName);
+    const bundlePath = await this.bundlePackage(packageName, projectPath);
+    console.info('bundlePath', bundlePath);
 
-    const bundleFilename = await this.bundlePackage(packageName, modulesFolderPath);
-    console.info('bundleFilename', bundleFilename);
+    const minifiedBundlePath = await this.minifyBundleFile(bundlePath, projectPath);
+    console.info('minifiedBundlePath', minifiedBundlePath);
 
-    const minifiedBundleFilename = await this.minifyBundleFile(bundleFileDir, bundleFilename);
-    console.info('minifiedBundleFilename', minifiedBundleFilename);
-
-    const gzippedAndMinifiedBundleFilename = await FileTools.gzipFile(
-      bundleFileDir,
-      minifiedBundleFilename
-    );
-    console.info('gzippedAndMinifiedBundleFilename', gzippedAndMinifiedBundleFilename);
+    const gzippedAndMinifiedBundlePath = await FileTools.gzipFile(minifiedBundlePath, projectPath);
+    console.info('gzippedAndMinifiedBundlePath', gzippedAndMinifiedBundlePath);
 
     // Report size of bundle size, minified bundle size and finally minified and gzipped bundle size
-    const bundleSizeInBytes = FileTools.getFileSizeInBytes(
-      path.join(bundleFileDir, bundleFilename)
-    );
+    const bundleSizeInBytes = FileTools.getFileSizeInBytes(path.join(projectPath, bundlePath));
     const minifiedBundleSizeInBytes = FileTools.getFileSizeInBytes(
-      path.join(bundleFileDir, minifiedBundleFilename)
+      path.join(projectPath, minifiedBundlePath)
     );
     const minifiedAndGzippedBundleSizeInBytes = FileTools.getFileSizeInBytes(
-      path.join(bundleFileDir, gzippedAndMinifiedBundleFilename)
+      path.join(projectPath, gzippedAndMinifiedBundlePath)
     );
-
-    // todo Cleanup all remove temp files
-    // fs.unlinkSync(path.join(path.dirname(require.resolve(package_name)), temp_bundle_file_name));
 
     // Return the result with a field indicating that all went fine
     return {

@@ -5,26 +5,23 @@ const del = require('del');
 /**
  * Gzips given file at given path and returns the path to this gzipped version.
  *
- * @param {String} fileDir Directory in which the file is found.
- * @param {String} filename Name of the file.
- * @return {String} Path to the gzipped file on success, null otherwise.
+ * @param {String} filePath Path to the file to be gzipped, relative to second parameter. Note that original file is kept.
+ * @param {String} fileDirectory Path to the folder where the file is found. Mostly serves as the working directory.
+ * @return {String} Path to the gzipped file (again relative to given folder path) on success, null otherwise.
  */
-exports.gzipFile = async function (fileDir, filename) {
+exports.gzipFile = async function (filePath, fileDirectory) {
   // Prepare the filename to be returned if all goes well
-  const gzippedFilename = filename + '.gz';
-  const args = ['--keep', filename];
-  const opts = {
-    cwd: fileDir,
-  };
+  const gzippedFilePath = filePath + '.gz';
+  const args = ['--keep', filePath];
+  const opts = { cwd: fileDirectory };
 
   try {
-    // todo check if webpack is in the path
     console.info('args gzipFile', args);
     console.info('opts gzipFile', opts);
 
     const { stdout, stderr } = await execa('gzip', args, opts);
 
-    return gzippedFilename;
+    return gzippedFilePath;
   } catch (error) {
     console.error(error);
     return null;

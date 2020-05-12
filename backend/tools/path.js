@@ -40,3 +40,14 @@ exports.getMinifiedFilename = function (filename) {
 
   return filename.substr(0, lastDotIndex) + '.min.' + filename.substr(lastDotIndex + 1);
 };
+
+/**
+ * Returns path to package folder in node_modules given the project path.
+ * i.e. returns /tmp/project/node_modules/package/.
+ *
+ * @param {String} packageName Name of the NPM package.
+ * @param {String} projectPath Path of the project where this package has been installed.
+ */
+exports.getModuleInstallationPath = function (packageName, projectPath) {
+  return path.join(projectPath, 'node_modules', packageName);
+};

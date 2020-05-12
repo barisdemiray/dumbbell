@@ -32,11 +32,11 @@ exports.initializeProject = async function () {
 
     await execa('yarn', initArgs, initOpts);
 
-    // Install basic tools we need
-    const addArgs = ['add', 'minify'];
+    // Install basic tools we need, i.e. uglify-js, webpack, and webpack-cli
+    const addArgs = ['add', 'uglify-js', 'webpack', 'webpack-cli@3.0.2'];
     const addOpts = { cwd: tempFolder };
 
-    console.info(`Installing minify in ${tempFolder} with Yarn`);
+    console.info(`Installing tools in ${tempFolder} with Yarn`);
     console.info('args yarn add', addArgs);
     console.info('opts yarn add', addOpts);
 
@@ -50,9 +50,9 @@ exports.initializeProject = async function () {
 };
 
 /**
- * Installs package with given name using yarn.
+ * Installs package with given name using yarn into a new temporary project at each call.
  * @param {String} packageName Name of the package.
- * @return {String} Installation path on success, null otherwise.
+ * @return {String} Project path (where package.json is located) on success, null otherwise.
  */
 exports.installPackage = async function (packageName) {
   // Initialize a new project
@@ -74,7 +74,7 @@ exports.installPackage = async function (packageName) {
 
   try {
     const { stdout, stderr } = await execa('yarn', addArgs, addOpts);
-    return path.join(tempProjectPath, 'node_modules');
+    return tempProjectPath;
   } catch (error) {
     console.error('error', error);
     return null;
@@ -103,14 +103,17 @@ exports.uninstallPackage = async function (packageName) {
 /**
  * Finds a package's entry point from its package.json, i.e. 'main'.
  * @param {String} packageName Name of the package.
- * @param {String} modulesFolderPath Path to node_modules folder in which the package has been installed.
+ * @param {String} projectPath Path to project folder in which the package has been installed.
  * @return {String} Entry point of the package, i.e. corresponding script's file name.
  */
-exports.getPackageEntryPoint = async function (packageName, modulesFolderPath) {
+exports.getPackageEntryPoint = async function (packageName, projectPath) {
   let packageEntryPoint = '';
 
   try {
-    const packageJsonPath = path.join(modulesFolderPath, packageName, 'package.json');
+    const packageJsonPath = path.join(
+      PathTools.getModuleInstallationPath(packageName, projectPath),
+      'package.json'
+    );
 
     // Load package.json only if it exists
     if (fs.existsSync(packageJsonPath)) {

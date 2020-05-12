@@ -50,4 +50,20 @@ describe('Path tools behaves correctly', () => {
       expect(minifiedFileName).toBe(expectedFileName);
     });
   });
+
+  /**
+   * Check if we can join paths to find module installation path.
+   */
+  describe('Module installation folder generation behaves correctly', () => {
+    test('Check that module installation folder is generated correctly', () => {
+      const packageName = 'hello';
+      const projectFolder = '/tmp/123kd01o0dw';
+      const moduleInstallationPath = PathTools.getModuleInstallationPath(
+        packageName,
+        projectFolder
+      );
+
+      expect(moduleInstallationPath).toBe(projectFolder + '/node_modules/' + packageName);
+    });
+  });
 });
