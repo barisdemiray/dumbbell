@@ -108,7 +108,7 @@ There is a `Dockerfile` to run the backend if that's your taste.
 ```shell
 pushd backend
 docker build -t dumbbell .
-docker run --rm --name dumbbell -p 8080:8080 dumbbell:latest
+docker run -d -p 8080:8080 --restart on-failure dumbbell:latest
 popd
 ```
 
