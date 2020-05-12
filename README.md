@@ -103,6 +103,17 @@ cd frontend
 yarn start
 ```
 
+There is a `Dockerfile` to run the backend if that's your taste.
+
+```shell
+pushd backend
+docker build -t dumbbell .
+docker run --rm --name dumbbell -p 8080:8080 dumbbell:latest
+popd
+```
+
+Do a `docker kill dumbbell` to terminate it.
+
 ## Testing
 
 There are unit tests for both frontend,
